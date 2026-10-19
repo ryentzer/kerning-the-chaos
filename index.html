@@ -7,19 +7,19 @@
 <meta name="description" content="A working studio of field guides, reusable skills, notes and studies on web craft: motion, type, 3D and the tools in between.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Condensed:ital,wght@0,400..700;1,400..700&family=JetBrains+Mono:wght@400;500&family=Newsreader:ital,opsz,wght@0,6..72,400;1,6..72,400&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Condensed:ital,wght@0,400..700;1,400..700&family=JetBrains+Mono:wght@400;500&family=Source+Sans+3:ital,wght@0,400;0,500;1,400&display=swap">
 <style>
 /* A studio wall: four rooms, each named for something found in a print shop or atelier. */
 :root {
   --paper: #EDE7DA; --ink: #221E19; --soft: #685D50; --rule: #CFC5B2; --cork: #A4612A; --moss: #47603A;
-  --display: "Libre Caslon Condensed", "Libre Caslon Text", Georgia, serif; --body: "Newsreader", Georgia, serif; --mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+  --display: "Libre Caslon Condensed", "Libre Caslon Text", Georgia, serif; --body: "Source Sans 3", "Source Sans Pro", system-ui, sans-serif; --mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
   color-scheme: light;
 }
 @media (prefers-color-scheme: dark) {
   :root { --paper: #1C1814; --ink: #ECE4D4; --soft: #A99C89; --rule: #3E352B; --cork: #DC9555; --moss: #9FB57F; color-scheme: dark; }
 }
 * { box-sizing: border-box; }
-body { margin: 0; background: var(--paper); color: var(--ink); font: 19px/1.6 var(--body);
+body { margin: 0; background: var(--paper); color: var(--ink); font: 18px/1.6 var(--body);
   padding: max(40px, env(safe-area-inset-top, 0px)) max(20px, env(safe-area-inset-right, 0px)) 80px max(20px, env(safe-area-inset-left, 0px)); }
 main { max-width: 980px; margin: 0 auto; }
 a { color: inherit; }
@@ -28,7 +28,7 @@ h1 { font: 500 clamp(58px, 12.5vw, 150px)/.9 var(--display); letter-spacing: -.0
 h1 .k { letter-spacing: .12em; transition: letter-spacing .9s cubic-bezier(.19,1,.22,1); }
 h1:hover .k { letter-spacing: -.02em; }
 h1 em { color: var(--cork); }
-.lede { font-size: 22px; max-width: 34em; margin: 0 0 48px; }
+.lede { font-size: 21px; max-width: 34em; margin: 0 0 48px; }
 .rooms { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 48px; border-top: 2px solid var(--ink); }
 .room { padding: 22px 0 30px; border-bottom: 1px solid var(--rule); min-width: 0; }
 .room header { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 6px; }
@@ -39,7 +39,7 @@ h1 em { color: var(--cork); }
 .room li a { text-decoration: none; display: block; }
 .room li a b { font-weight: 500; font-family: var(--display); font-size: 25px; display: block; }
 .room li a:hover b { color: var(--cork); }
-.room li a span { font-size: 15.5px; color: var(--soft); }
+.room li a span { font-size: 16px; color: var(--soft); }
 .empty { font: 13px var(--mono); color: var(--soft); }
 footer { margin-top: 48px; font: 12px var(--mono); color: var(--soft); }
 @media (max-width: 720px) { .rooms { grid-template-columns: minmax(0, 1fr); } }
