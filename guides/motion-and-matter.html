@@ -1,0 +1,1436 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px/1.4 system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Motion &amp; Matter</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gloock&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a field guide. Sticky chapter index on the left, a ~68ch reading column, demo "benches" that break slightly wider than the text. */
+:root {
+  --paper: #ECE5D3;      /* parchment ground */
+  --bench: #E1D8C2;      /* demo surface, a shade deeper */
+  --ink: #2E2219;        /* walnut ink */
+  --ink-soft: #6B5B4B;   /* faded ink for captions */
+  --moss: #4E6133;       /* structure, bars, links */
+  --brass: #94661C;      /* the one interactive accent */
+  --rule: #CDBFA3;       /* hairlines */
+  --code-bg: #E6DEC9;
+  --font-display: "Gloock", "Iowan Old Style", Georgia, serif;
+  --font-body: "Source Serif 4", "Iowan Old Style", Georgia, serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --measure: 68ch;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #1D1813; --bench: #28211A; --ink: #E9E0CC; --ink-soft: #A79883;
+    --moss: #A2B67C; --brass: #D9A64F; --rule: #3F352A; --code-bg: #231D17; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #1D1813; --bench: #28211A; --ink: #E9E0CC; --ink-soft: #A79883;
+  --moss: #A2B67C; --brass: #D9A64F; --rule: #3F352A; --code-bg: #231D17; color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  background: var(--paper); color: var(--ink);
+  font-family: var(--font-body); font-size: 18px; line-height: 1.62;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  -webkit-font-smoothing: antialiased;
+}
+a { color: var(--moss); text-underline-offset: 3px; }
+a:hover { color: var(--brass); }
+:focus-visible { outline: 2px solid var(--brass); outline-offset: 2px; }
+
+.shell { max-width: 1240px; margin: 0 auto; display: grid; grid-template-columns: 230px minmax(0, 1fr); gap: 56px; }
+
+/* ---------- index ---------- */
+.index { position: sticky; top: env(safe-area-inset-top, 0px); align-self: start; max-height: 100vh; overflow-y: auto; padding-block: 36px 24px; font-family: var(--font-mono); font-size: 12.5px; }
+.index summary { display: none; }
+.index .brand { font-family: var(--font-display); font-size: 22px; line-height: 1.1; color: var(--ink); text-decoration: none; display: block; margin-bottom: 22px; }
+.index .part { text-transform: uppercase; letter-spacing: .14em; font-size: 10.5px; color: var(--ink-soft); margin: 20px 0 6px; }
+.index ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+.index li a { display: grid; grid-template-columns: 26px 1fr; padding: 3px 6px; border-radius: 3px; color: var(--ink-soft); text-decoration: none; line-height: 1.35; }
+.index li a span:first-child { font-variant-numeric: tabular-nums; }
+.index li a:hover { color: var(--ink); background: var(--bench); }
+.index li a.active { color: var(--ink); background: var(--bench); box-shadow: inset 2px 0 0 var(--brass); }
+.slowmo { margin-top: 26px; padding-top: 14px; border-top: 1px solid var(--rule); color: var(--ink-soft); line-height: 1.45; }
+.slowmo label { display: flex; gap: 8px; align-items: flex-start; color: var(--ink); cursor: pointer; }
+.slowmo p { margin: 6px 0 0; font-size: 11.5px; }
+
+/* ---------- reading column ---------- */
+main { min-width: 0; padding-block: 40px 120px; }
+.hero { padding-block: 24px 40px; border-bottom: 1px solid var(--rule); margin-bottom: 28px; max-width: 900px; }
+.eyebrow { font-family: var(--font-mono); text-transform: uppercase; letter-spacing: .16em; font-size: 11.5px; color: var(--ink-soft); }
+.hero h1 { font-family: var(--font-display); font-weight: 400; font-size: clamp(56px, 10vw, 128px); line-height: .92; margin: 14px 0 22px; letter-spacing: -.01em; }
+.hero h1 .ch { display: inline-block; will-change: transform; }
+.hero h1 .amp { color: var(--brass); font-style: italic; }
+.hero .lede { font-size: 21px; line-height: 1.5; max-width: 34em; margin: 0; }
+.hero .how { color: var(--ink-soft); max-width: var(--measure); font-size: 16.5px; margin-top: 18px; }
+
+.part-head { margin: 88px 0 8px; display: flex; align-items: baseline; gap: 14px; border-top: 2px solid var(--ink); padding-top: 12px; max-width: 900px; flex-wrap: wrap; }
+.part-head .num { font-family: var(--font-mono); font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--brass); }
+.part-head h2 { font-family: var(--font-display); font-weight: 400; font-size: 34px; margin: 0; line-height: 1.1; }
+.part-head p { flex-basis: 100%; margin: 4px 0 0; color: var(--ink-soft); max-width: var(--measure); }
+
+section.ch { margin-top: 64px; scroll-margin-top: 20px; }
+section.ch > h3 { font-family: var(--font-display); font-weight: 400; font-size: clamp(28px, 4vw, 38px); line-height: 1.12; margin: 0 0 18px; text-wrap: balance; max-width: 22em; }
+section.ch > h3 .n { font-family: var(--font-mono); font-size: 14px; color: var(--brass); vertical-align: .55em; margin-right: 10px; letter-spacing: .05em; }
+section.ch h4 { font-family: var(--font-body); font-weight: 600; font-size: 19px; margin: 34px 0 6px; max-width: var(--measure); }
+p, .prose li { max-width: var(--measure); }
+p { margin: 0 0 16px; }
+em { font-style: italic; }
+code { font-family: var(--font-mono); font-size: .84em; background: var(--code-bg); padding: 1px 5px; border-radius: 3px; }
+.prose ul, .prose ol { padding-left: 1.2em; max-width: var(--measure); }
+
+/* callouts */
+.callout { max-width: var(--measure); border-left: 3px solid var(--moss); padding: 4px 0 4px 18px; margin: 22px 0; }
+.callout.trap { border-left-color: var(--brass); }
+.callout .tag { display: block; font-family: var(--font-mono); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--moss); margin-bottom: 4px; }
+.callout.trap .tag { color: var(--brass); }
+.callout p:last-child { margin-bottom: 0; }
+
+/* code */
+pre.code { font-family: var(--font-mono); font-size: 13.5px; line-height: 1.6; background: var(--code-bg); border: 1px solid var(--rule); border-radius: 4px; padding: 14px 16px; margin: 18px 0 22px; overflow-x: auto; max-width: 860px; color: var(--ink); tab-size: 2; }
+pre.code .c { color: var(--ink-soft); font-style: italic; }
+pre.code .s { color: var(--moss); }
+pre.code .k { color: var(--brass); }
+
+/* tables */
+.table-wrap { overflow-x: auto; max-width: 860px; margin: 18px 0 24px; }
+table { border-collapse: collapse; width: 100%; font-size: 15.5px; line-height: 1.45; }
+th, td { text-align: left; vertical-align: top; padding: 9px 12px 9px 0; border-bottom: 1px solid var(--rule); }
+th { font-family: var(--font-mono); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-soft); font-weight: 500; }
+td code { white-space: nowrap; }
+
+/* ---------- demo bench ---------- */
+.bench { background: var(--bench); border: 1px solid var(--rule); border-radius: 6px; margin: 26px 0 30px; max-width: 900px; overflow: hidden; }
+.bench-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 10px 16px; border-bottom: 1px solid var(--rule); font-family: var(--font-mono); font-size: 11.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-soft); flex-wrap: wrap; }
+.bench-head b { color: var(--ink); font-weight: 500; }
+.bench-body { padding: 18px 16px; display: grid; gap: 16px; }
+.controls { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center; font-family: var(--font-mono); font-size: 12.5px; color: var(--ink-soft); }
+.controls label { display: inline-flex; align-items: center; gap: 8px; }
+.controls output { color: var(--ink); min-width: 3.5em; font-variant-numeric: tabular-nums; }
+.btn { font-family: var(--font-mono); font-size: 12.5px; color: var(--ink); background: var(--paper); border: 1px solid var(--rule); border-radius: 4px; padding: 6px 12px; cursor: pointer; }
+.btn:hover { border-color: var(--brass); }
+.btn.primary { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.btn.primary:hover { background: var(--brass); border-color: var(--brass); }
+select, input[type="range"] { accent-color: var(--brass); font-family: var(--font-mono); font-size: 12.5px; }
+select { background: var(--paper); color: var(--ink); border: 1px solid var(--rule); border-radius: 4px; padding: 4px 6px; }
+input[type="range"] { width: 140px; }
+.readout { font-family: var(--font-mono); font-size: 12.5px; color: var(--ink-soft); display: flex; flex-wrap: wrap; gap: 6px 22px; font-variant-numeric: tabular-nums; }
+.readout b { color: var(--ink); font-weight: 500; }
+.live-code { margin: 0 !important; }
+canvas.plot { display: block; width: 100%; }
+
+/* tween lab */
+.track { position: relative; height: 64px; border-bottom: 1px dashed var(--rule); }
+.puck { position: absolute; left: 0; top: 12px; width: 40px; height: 40px; border-radius: 50%; background: var(--brass); }
+/* ease lab */
+.ease-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr); gap: 18px; align-items: start; }
+/* timeline lab */
+.specimen-stage { display: grid; place-items: center; padding: 14px 0 6px; min-height: 230px; }
+.specimen { position: relative; width: min(380px, 100%); background: var(--paper); border: 1px solid var(--rule); border-radius: 4px; padding: 22px 22px 20px; }
+.specimen .sp-title { font-family: var(--font-display); font-size: 30px; line-height: 1.05; margin: 0 0 10px; }
+.specimen .sp-latin { font-style: italic; color: var(--ink-soft); font-size: 15px; margin: 0 0 12px; }
+.specimen .sp-rule { height: 2px; background: var(--moss); margin-bottom: 14px; }
+.specimen .sp-tags { display: flex; gap: 8px; flex-wrap: wrap; }
+.specimen .sp-tags span { font-family: var(--font-mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; border: 1px solid var(--rule); border-radius: 20px; padding: 3px 10px; color: var(--ink-soft); }
+.specimen .sp-seal { position: absolute; right: 16px; top: 16px; width: 54px; height: 54px; border-radius: 50%; border: 2px solid var(--brass); color: var(--brass); display: grid; place-items: center; font-family: var(--font-mono); font-size: 10px; letter-spacing: .08em; text-align: center; line-height: 1.15; }
+/* gantt */
+.gantt { font-family: var(--font-mono); font-size: 11.5px; color: var(--ink-soft); position: relative; }
+.gantt .g-row { display: grid; grid-template-columns: 104px minmax(0, 1fr); align-items: center; height: 22px; }
+.gantt .g-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding-right: 8px; }
+.gantt .g-track { position: relative; height: 100%; border-left: 1px solid var(--rule); }
+.gantt .g-bar { position: absolute; top: 5px; height: 12px; background: var(--moss); border-radius: 2px; opacity: .85; }
+.gantt .g-ruler { display: grid; grid-template-columns: 104px minmax(0, 1fr); height: 18px; }
+.gantt .g-ticks { position: relative; border-top: 1px solid var(--rule); }
+.gantt .g-ticks span { position: absolute; top: 2px; transform: translateX(-50%); font-size: 10px; }
+.gantt .g-head { position: absolute; top: 0; bottom: 18px; width: 2px; background: var(--brass); pointer-events: none; }
+.gantt .g-lane { position: absolute; left: 104px; right: 0; top: 0; bottom: 0; pointer-events: none; }
+input.scrub { width: 100%; }
+/* stagger lab */
+.dots { display: grid; grid-template-columns: repeat(14, 1fr); gap: 8px; padding: 10px 4px; }
+.dots i { aspect-ratio: 1; max-width: 100%; border-radius: 50%; background: var(--moss); cursor: pointer; display: block; }
+.dots i.origin { background: var(--brass); }
+/* pointer lab */
+.pointer-row { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 14px; }
+.pad { position: relative; height: 240px; background: var(--paper); border: 1px solid var(--rule); border-radius: 4px; overflow: hidden; touch-action: none; }
+.pad .hint { position: absolute; left: 12px; bottom: 10px; font-family: var(--font-mono); font-size: 11px; color: var(--ink-soft); pointer-events: none; }
+.f-dot, .f-ring { position: absolute; left: 0; top: 0; border-radius: 50%; pointer-events: none; }
+.f-dot { width: 10px; height: 10px; background: var(--ink); margin: -5px 0 0 -5px; }
+.f-ring { width: 44px; height: 44px; border: 1.5px solid var(--brass); margin: -22px 0 0 -22px; }
+.mag-wrap { display: grid; place-items: center; }
+.mag { font-family: var(--font-display); font-size: 22px; background: var(--ink); color: var(--paper); border: 0; border-radius: 60px; padding: 26px 34px; cursor: pointer; }
+.mag span { display: inline-block; pointer-events: none; }
+/* draw lab */
+.sprig { width: 100%; max-width: 640px; display: block; margin: 0 auto; }
+.sprig path { fill: none; stroke: var(--moss); stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+.sprig path.bud { stroke: var(--brass); }
+/* scroll lab */
+.scroller { position: relative; height: 380px; overflow-y: auto; background: var(--paper); border: 1px solid var(--rule); border-radius: 4px; }
+.scroller .pad-top, .scroller .pad-bot { height: 340px; display: grid; place-items: center; font-family: var(--font-mono); font-size: 12px; color: var(--ink-soft); }
+.scroller .trig { position: relative; padding: 30px 22px; min-height: 420px; border-top: 1px dashed var(--rule); border-bottom: 1px dashed var(--rule); }
+.st-card { max-width: 360px; margin: 0 auto; padding: 18px; border: 1px solid var(--rule); border-radius: 4px; background: var(--bench); }
+.st-card h5 { font-family: var(--font-display); font-weight: 400; font-size: 22px; margin: 0 0 12px; }
+.st-bar { height: 6px; background: var(--rule); border-radius: 3px; overflow: hidden; }
+.st-bar i { display: block; height: 100%; background: var(--brass); transform-origin: left center; }
+.st-stem { width: 6px; height: 120px; background: var(--moss); margin: 16px auto 0; transform-origin: bottom center; border-radius: 3px; }
+/* three stages */
+.stage3d { position: relative; width: 100%; aspect-ratio: 16 / 9; max-width: 100%; border-radius: 4px; background: radial-gradient(ellipse at 50% 35%, var(--paper), var(--bench)); cursor: grab; touch-action: none; overflow: hidden; }
+.stage3d:active { cursor: grabbing; }
+.stage3d canvas { display: block; width: 100% !important; height: 100% !important; }
+.stage3d .fallback { position: absolute; inset: 0; display: grid; place-items: center; padding: 20px; text-align: center; font-family: var(--font-mono); font-size: 12.5px; color: var(--ink-soft); }
+.stage3d .tip { position: absolute; left: 10px; bottom: 8px; font-family: var(--font-mono); font-size: 11px; color: var(--ink-soft); pointer-events: none; }
+
+footer.colophon { margin-top: 96px; padding-top: 16px; border-top: 1px solid var(--rule); color: var(--ink-soft); font-size: 15px; max-width: var(--measure); }
+
+@media (max-width: 960px) {
+  .shell { grid-template-columns: minmax(0, 1fr); gap: 0; }
+  .index { position: static; max-height: none; padding-block: 18px 0; border-bottom: 1px solid var(--rule); }
+  .index summary { display: block; cursor: pointer; font-family: var(--font-mono); font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-soft); padding: 8px 0 12px; }
+  .index .brand { display: none; }
+  main { padding-top: 12px; }
+}
+@media (max-width: 700px) {
+  body { font-size: 17px; }
+  .ease-grid, .pointer-row { grid-template-columns: minmax(0, 1fr); }
+  .dots { grid-template-columns: repeat(10, 1fr); gap: 6px; }
+  .gantt .g-row, .gantt .g-ruler { grid-template-columns: 78px minmax(0, 1fr); }
+  .gantt .g-lane { left: 78px; }
+  input[type="range"] { width: 110px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+}
+</style>
+
+<div class="shell">
+  <nav class="index" aria-label="Chapters">
+    <details id="toc-details" open>
+      <summary>Chapters</summary>
+      <a class="brand" href="#top">Motion &amp; Matter</a>
+      <div class="part">I · Motion</div>
+      <ol>
+        <li><a href="#tween"><span>01</span><span>What a tween is</span></a></li>
+        <li><a href="#easing"><span>02</span><span>Easing is the performance</span></a></li>
+        <li><a href="#timelines"><span>03</span><span>Timelines &amp; position</span></a></li>
+        <li><a href="#stagger"><span>04</span><span>Stagger</span></a></li>
+        <li><a href="#pointer"><span>05</span><span>Following the hand</span></a></li>
+        <li><a href="#svg"><span>06</span><span>Drawing with strokes</span></a></li>
+        <li><a href="#scroll"><span>07</span><span>Scroll as scrubber</span></a></li>
+      </ol>
+      <div class="part">II · Matter</div>
+      <ol>
+        <li><a href="#scene"><span>08</span><span>The scene, translated</span></a></li>
+        <li><a href="#light"><span>09</span><span>Light &amp; material</span></a></li>
+        <li><a href="#loop"><span>10</span><span>The frame budget</span></a></li>
+      </ol>
+      <div class="part">III · Direction</div>
+      <ol>
+        <li><a href="#director"><span>11</span><span>GSAP directs the scene</span></a></li>
+      </ol>
+      <div class="part">IV · Craft</div>
+      <ol>
+        <li><a href="#award"><span>12</span><span>Award-level work</span></a></li>
+        <li><a href="#practice"><span>13</span><span>A practice plan</span></a></li>
+        <li><a href="#reference"><span>A</span><span>Reference tables</span></a></li>
+      </ol>
+      <div class="slowmo">
+        <label for="slowmo"><input type="checkbox" id="slowmo"> Slow every demo to ¼ speed</label>
+        <p>This sets <code>gsap.globalTimeline.timeScale(0.25)</code>. It's the same trick to use when taking apart someone else's GSAP site from the console.</p>
+      </div>
+    </details>
+  </nav>
+
+  <main id="top">
+    <header class="hero">
+      <div class="eyebrow">A field guide · GSAP 3.13 · Three.js r149</div>
+      <h1 id="hero-title" aria-label="Motion &amp; Matter">Motion <span class="amp">&amp;</span> Matter</h1>
+      <p class="lede">How to make things move with intent in the browser, and how to build, light and direct 3D scenes there. Written for someone who already thinks in keyframes and key lights.</p>
+      <p class="how">Each chapter explains the idea, then gives you a working bench where the real library runs. Change the controls until you can predict what will happen before you press play. When a chapter makes you want to build something, stop and build it. Reading teaches you the vocabulary, but your hands learn the timing.</p>
+    </header>
+
+    <!-- ================= PART I ================= -->
+    <div class="part-head"><span class="num">Part I</span><h2>Motion</h2><p>GSAP from the ground up. Seven chapters that build on each other.</p></div>
+
+    <section class="ch prose" id="tween">
+      <h3><span class="n">01</span>What a tween actually is</h3>
+      <p>Strip away the reputation and GSAP does one thing. It changes numbers over time. The word <em>tween</em> comes from cel animation, where a lead animator drew the key poses and assistants drew the in-betweens. A GSAP tween is that assistant. You give it a target, an end value, a duration and an ease, and on every frame it works out where the value should be and writes it.</p>
+      <p>The machinery is worth knowing exactly. The browser repaints about 60 times a second on most screens and 120 on high-refresh displays. GSAP runs a single clock, the <em>ticker</em>, built on <code>requestAnimationFrame</code>. On each tick, every active tween asks how much time has passed since it started. It divides that by its duration to get a progress number between 0 and 1. It passes that progress through the ease, then interpolates between the start and end values, then sets the property. Because the calculation starts from elapsed time and not from a frame count, a dropped frame never slows an animation down. The tween just lands a little further along on the next frame.</p>
+      <p>The bench below makes those frames visible. Every dot in the plot is one frame where GSAP wrote a new <code>x</code> value. Notice that the dots bunch up where the motion is slow and spread out where it's fast. Hold on to that picture, because the next chapter is about it.</p>
+
+      <div class="bench" id="b-tween">
+        <div class="bench-head"><span><b>Bench 01</b> · the four verbs</span><span>each dot = one frame</span></div>
+        <div class="bench-body">
+          <div class="track" id="t1-track"><div class="puck" id="t1-puck"></div></div>
+          <div class="controls">
+            <button class="btn primary" data-kind="to">gsap.to</button>
+            <button class="btn" data-kind="from">gsap.from</button>
+            <button class="btn" data-kind="fromTo">gsap.fromTo</button>
+            <button class="btn" data-kind="set">gsap.set</button>
+            <label for="t1-dur">duration <input type="range" id="t1-dur" min="0.2" max="3" step="0.1" value="1.2"><output id="t1-dur-out">1.2s</output></label>
+          </div>
+          <canvas class="plot" id="t1-plot" height="150"></canvas>
+          <div class="readout"><span>progress <b id="t1-prog">0.000</b></span><span>x <b id="t1-x">0</b>px</span><span>frames written <b id="t1-frames">0</b></span></div>
+          <pre class="code live-code" id="t1-code"></pre>
+        </div>
+      </div>
+
+      <h4>The four verbs</h4>
+      <p><code>gsap.to()</code> animates from wherever the element is now to the values you give. It's the one you'll use most. <code>gsap.from()</code> is the reverse. It jumps the element to the values you give, then animates back to where it was. That's why it's the standard choice for entrances: you lay the page out in its final state in CSS, and <code>from()</code> brings each element in from somewhere else. <code>gsap.fromTo()</code> spells out both ends, which you want when the current state is unreliable, like when an animation can be interrupted and restarted. <code>gsap.set()</code> is a zero-duration tween. It applies values instantly, and it's how you prepare a starting state.</p>
+
+      <h4>What you should animate</h4>
+      <p>This matters more than any API detail. Changing <code>transform</code> (GSAP's <code>x</code>, <code>y</code>, <code>scale</code>, <code>rotation</code>) and <code>opacity</code> is cheap. The browser can move an already-painted layer on the GPU without recalculating the page. Changing <code>width</code>, <code>height</code>, <code>top</code>, <code>left</code> or <code>margin</code> forces the browser to redo layout every frame, and the page starts to stutter. If you think of it in compositing terms, transforms move a finished layer in the comp, while layout properties re-flow the document and re-render it. Award-level motion is almost always built from transforms and opacity, with clip-path and filters used sparingly.</p>
+      <p>GSAP also adds some conveniences. <code>autoAlpha</code> tweens opacity and sets <code>visibility: hidden</code> at zero, so invisible elements stop catching clicks. <code>xPercent</code> and <code>yPercent</code> move by a fraction of the element's own size. Relative values like <code>"+=100"</code> add to the current value. And the defaults are worth memorizing: if you don't specify them, duration is 0.5 seconds and ease is <code>"power1.out"</code>.</p>
+
+      <div class="callout trap"><span class="tag">Trap</span><p><code>from()</code> renders its starting state the instant it's created, even if it has a delay or sits later in a timeline. This is deliberate, because it prevents a flash of the final layout before the animation starts. It surprises people when they stack two <code>from()</code> tweens on the same property, because the second one records the first one's start value as its destination. When you need to chain changes to the same property, use <code>fromTo()</code>.</p></div>
+    </section>
+
+    <section class="ch prose" id="easing">
+      <h3><span class="n">02</span>Easing is the performance</h3>
+      <p>If you remember one chapter, make it this one. An ease is a function that takes time progress (0 to 1) and returns value progress. Plot it with time running left to right and value running bottom to top. A straight diagonal is <code>"none"</code>, constant speed, and it looks mechanical because nothing physical moves that way. Every other curve redistributes the same total distance across the same frames.</p>
+      <p>Animators already have words for this. <em>Timing</em> is how long a move takes and when it happens. <em>Spacing</em> is how the distance is divided between the frames. Two moves with identical timing can feel completely different because of spacing. The strip under the curve in the bench below is an animator's spacing chart. It shows the ball's position at 13 evenly spaced moments in time. Where the ghosts crowd together, the object is slow. Where they spread apart, it's fast. GSAP eases are spacing charts written as math.</p>
+
+      <div class="bench" id="b-ease">
+        <div class="bench-head"><span><b>Bench 02</b> · ease explorer</span><span id="t2-name">power2.out</span></div>
+        <div class="bench-body">
+          <div class="controls">
+            <label for="t2-fam">family <select id="t2-fam">
+              <option>none</option><option>power1</option><option selected>power2</option><option>power3</option><option>power4</option><option>sine</option><option>circ</option><option>expo</option><option>back</option><option>elastic</option><option>bounce</option><option>steps</option>
+            </select></label>
+            <label for="t2-type">type <select id="t2-type"><option>in</option><option selected>out</option><option>inOut</option></select></label>
+            <label for="t2-dur">duration <input type="range" id="t2-dur" min="0.3" max="3" step="0.1" value="1.2"><output id="t2-dur-out">1.2s</output></label>
+            <button class="btn primary" id="t2-play">Play</button>
+          </div>
+          <div class="ease-grid">
+            <canvas class="plot" id="t2-curve" height="260" aria-label="Ease curve: time on the horizontal axis, value on the vertical"></canvas>
+            <canvas class="plot" id="t2-lanes" height="260" aria-label="Spacing chart comparing the chosen ease to linear motion"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <h4>In, out, and inOut</h4>
+      <p>The suffix says where the ease does its work. An <code>.out</code> ease starts fast and decelerates into place. That's how things <em>arrive</em>: a card settling, a menu sliding in, a heading landing. An <code>.in</code> ease starts slow and accelerates away, which is how things <em>leave</em>. An <code>.inOut</code> ease speeds up and then slows down, which suits something moving from one place to another while staying on screen, like a camera move or a slider panning. A useful default that holds up most of the time is out for entrances, in for exits, and inOut for moves within the frame. Exits can usually be a bit shorter than entrances, because the eye has already lost interest in something that's leaving.</p>
+
+      <h4>The families</h4>
+      <p>The <code>power</code> eases are a ladder of strength. <code>power1</code> is quadratic, <code>power2</code> cubic, <code>power3</code> quartic, <code>power4</code> quintic. Each step up holds the motion back longer at one end and then commits harder at the other. <code>expo</code> is past power4, and <code>sine</code> sits below power1 and is very gentle. <code>circ</code> has a sharp knee near the end. Those are your everyday materials.</p>
+      <p>The character eases map to classical animation principles. <code>back</code> overshoots and settles, which is follow-through. Its <code>.in</code> version pulls backward before moving forward, which is anticipation. <code>elastic</code> wobbles like a spring and works for small playful accents, but it gets tiresome quickly when used on layout. <code>bounce</code> is literal, and it's rarely the right choice outside of something that is actually bouncing. <code>steps(n)</code> jumps in discrete increments, which gives you stop-motion and sprite sheets.</p>
+
+      <div class="callout"><span class="tag">Why premium motion feels premium</span><p>Much of the motion on highly regarded sites uses a strong out-ease (<code>expo.out</code>, <code>power4.out</code>) with a longer duration than you'd expect, often around 1 to 1.6 seconds. The element leaves almost instantly, so the interface feels responsive, and then it spends most of its duration settling, so it feels weighty and calm. Try <code>expo.out</code> at 1.4s above, then <code>power1.out</code> at 0.4s. Both are fine. They describe different materials.</p></div>
+
+      <h4>Duration, distance, and consistency</h4>
+      <p>Treat these numbers as starting points rather than laws. Small interface responses like hovers and toggles feel right somewhere around 0.15 to 0.35 seconds. Panels and page elements moving a meaningful distance want 0.5 to 1 second. Hero and cinematic moments can run 1.2 to 2.5 seconds, but only when the viewer isn't waiting on them. Bigger distances need more time, and so do bigger objects, because we read size as mass.</p>
+      <p>Studios also pick a small set of eases and durations and use them everywhere. Two or three eases and three durations give a site a recognizable motion voice. In GSAP that's <code>gsap.defaults({ ease: "expo.out", duration: 1.2 })</code> for the global default. When you need a curve the presets don't offer, the CustomEase plugin lets you draw one, and all of GSAP's plugins are free to use now.</p>
+    </section>
+
+    <section class="ch prose" id="timelines">
+      <h3><span class="n">03</span>Timelines and the position parameter</h3>
+      <p>A single tween is a move. A timeline is choreography. <code>gsap.timeline()</code> gives you a container that holds tweens on its own clock, and you control it as one object. It can play, pause, reverse, seek, change speed, or be scrubbed by scroll. If you've used the After Effects timeline, you already have the right mental picture. The bench even draws one for you.</p>
+      <p>By default, each tween you add starts when the previous one ends. That's tidy and it's also the main reason beginner animation looks robotic. Real motion overlaps. A head turns before the body finishes stepping. A title starts rising while its card is still settling. The tool for that is the <em>position parameter</em>, the optional last argument of every timeline method. Mastering it is most of what separates fluid GSAP work from stiff GSAP work.</p>
+
+      <div class="bench" id="b-timeline">
+        <div class="bench-head"><span><b>Bench 03</b> · one card, five tweens</span><span>drag the scrubber</span></div>
+        <div class="bench-body">
+          <div class="specimen-stage">
+            <div class="specimen" id="t3-card">
+              <div class="sp-seal" id="t3-seal">No.<br>0417</div>
+              <p class="sp-title" id="t3-title">Common<br>Wood Sorrel</p>
+              <p class="sp-latin" id="t3-latin">Oxalis acetosella</p>
+              <div class="sp-rule" id="t3-rule"></div>
+              <div class="sp-tags"><span class="t3-tag">Shade</span><span class="t3-tag">Perennial</span><span class="t3-tag">Edible</span></div>
+            </div>
+          </div>
+          <div class="controls">
+            <button class="btn primary" id="t3-play">Play from start</button>
+            <button class="btn" id="t3-rev">Reverse</button>
+            <label for="t3-ov">overlap <input type="range" id="t3-ov" min="0" max="0.5" step="0.05" value="0.3"><output id="t3-ov-out">0.30s</output></label>
+          </div>
+          <input type="range" class="scrub" id="t3-scrub" min="0" max="1000" value="1000" aria-label="Timeline progress">
+          <div class="gantt" id="t3-gantt"></div>
+          <pre class="code live-code" id="t3-code"></pre>
+        </div>
+      </div>
+
+      <p>Set the overlap to zero and play it. Every piece waits politely for the last one to finish, and the card assembles like a slideshow. Raise it to 0.3 and the same five tweens read as one gesture. Nothing about the individual tweens changed. Only their placement in time changed.</p>
+
+      <h4>Every form the position parameter takes</h4>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Write</th><th>Meaning</th></tr></thead>
+        <tbody>
+          <tr><td><code>1.5</code></td><td>At exactly 1.5 seconds into the timeline (absolute).</td></tr>
+          <tr><td><code>"+=0.5"</code></td><td>Half a second after the end of the timeline so far, leaving a gap.</td></tr>
+          <tr><td><code>"-=0.3"</code></td><td>0.3s before the end of the timeline so far, so it overlaps.</td></tr>
+          <tr><td><code>"&lt;"</code></td><td>At the <em>start</em> of the previously added tween. The two play together.</td></tr>
+          <tr><td><code>"&gt;"</code></td><td>At the <em>end</em> of the previously added tween. This is the default.</td></tr>
+          <tr><td><code>"&lt;0.2"</code></td><td>0.2s after the previous tween <em>starts</em>. This is the workhorse for cascades.</td></tr>
+          <tr><td><code>"&gt;-0.1"</code></td><td>0.1s before the previous tween ends.</td></tr>
+          <tr><td><code>"&lt;50%"</code></td><td>Halfway through the previous tween. Percentages scale with its duration.</td></tr>
+          <tr><td><code>"reveal"</code></td><td>At a label you added with <code>tl.addLabel("reveal")</code>.</td></tr>
+          <tr><td><code>"reveal+=0.4"</code></td><td>Relative to a label. Labels let you rearrange sections without recalculating numbers.</td></tr>
+        </tbody>
+      </table></div>
+      <p>There's a subtle difference between <code>"-=0.3"</code> and <code>"&gt;-0.3"</code>. The first measures from the end of the <em>whole timeline so far</em>, and the second from the end of the <em>most recently added</em> tween. They match until you place something out of order, and then they diverge. Use <code>"&lt;"</code> and <code>"&gt;"</code> when you're thinking about one tween relative to the one before it, which is most of the time.</p>
+
+      <h4>How professionals structure big sequences</h4>
+      <p>On a real site you don't write one timeline with sixty tweens. You write small functions that each return a timeline for one section, and you nest them in a master timeline. Nested timelines behave exactly like tweens, so the position parameter works on them too.</p>
+      <pre class="code">function intro() {
+  return gsap.timeline()
+    .from(".hero h1 .ch", { yPercent: 110, stagger: 0.04, duration: 1.2, ease: "expo.out" })
+    .from(".hero .lede", { autoAlpha: 0, y: 20 }, "&lt;0.4");
+}
+function nav() {
+  return gsap.timeline().from(".nav a", { autoAlpha: 0, y: -10, stagger: 0.06 });
+}
+
+const master = gsap.timeline({ defaults: { ease: "expo.out", duration: 1 } });
+master.add(intro())
+      .add(nav(), "-=0.8")       // nav starts while the intro is still settling
+      .addLabel("ready");</pre>
+      <p>Two more tools belong here. <code>defaults</code> on a timeline sets duration and ease for every child, which keeps your motion voice consistent. And <code>gsap.context()</code> collects every tween and ScrollTrigger created inside it, so a single <code>ctx.revert()</code> kills them all and restores the original styles. That matters on sites with page transitions, in frameworks like React, and any time you rebuild an animation. The benches on this page rebuild their timelines whenever you move a control, and they rely on the same cleanup.</p>
+    </section>
+
+    <section class="ch prose" id="stagger">
+      <h3><span class="n">04</span>Stagger: one idea, many objects</h3>
+      <p>Pass GSAP an array or a selector that matches many elements and add <code>stagger</code>. Each element gets the same tween, offset in time. The simplest form is a number, <code>stagger: 0.05</code>, which means each element starts 0.05 seconds after the previous one. The object form is where the interesting design decisions live.</p>
+
+      <div class="bench" id="b-stagger">
+        <div class="bench-head"><span><b>Bench 04</b> · stagger field</span><span>click any dot to make it the origin</span></div>
+        <div class="bench-body">
+          <div class="dots" id="t4-dots"></div>
+          <div class="controls">
+            <label for="t4-from">from <select id="t4-from"><option>start</option><option selected>center</option><option>end</option><option>edges</option><option>random</option><option value="index">clicked dot</option></select></label>
+            <label for="t4-grid"><input type="checkbox" id="t4-grid" checked> grid</label>
+            <label for="t4-axis">axis <select id="t4-axis"><option value="">both</option><option>x</option><option>y</option></select></label>
+            <label for="t4-amount">amount <input type="range" id="t4-amount" min="0.2" max="2.5" step="0.1" value="1.2"><output id="t4-amount-out">1.2s</output></label>
+            <label for="t4-sease">distribution <select id="t4-sease"><option>none</option><option>power2.in</option><option>power3.out</option><option>sine.inOut</option></select></label>
+            <button class="btn primary" id="t4-play">Play</button>
+          </div>
+          <pre class="code live-code" id="t4-code"></pre>
+        </div>
+      </div>
+
+      <p><code>each</code> sets the gap between consecutive elements, so total time grows with the number of elements. <code>amount</code> sets the <em>total</em> spread, so it doesn't matter whether you have 8 items or 800. Use <code>amount</code> when the element count can change, as with a CMS collection in Webflow. <code>from</code> decides where the wave begins: <code>"start"</code>, <code>"end"</code>, <code>"center"</code>, <code>"edges"</code>, <code>"random"</code>, or a specific index. With <code>grid</code> set to <code>"auto"</code> or <code>[rows, columns]</code>, GSAP measures distance in two dimensions, so a wave from the center ripples outward like water instead of running along a line. <code>axis</code> limits that measurement to columns or rows.</p>
+      <p>The <code>ease</code> inside the stagger object is easy to overlook and very expressive. It doesn't change how each element moves. It changes how the start times are <em>distributed</em>. With <code>power2.in</code>, the first elements start close together and later ones spread out, so the wave decelerates as it travels. With <code>power3.out</code> it's the opposite. Try both with the grid from the center and you'll see the ripple speed up or slow down as it expands.</p>
+      <div class="callout"><span class="tag">Where you'll use it</span><p>Split headlines (letters or words staggered in), gallery grids, nav items, lists of features, particle fields, and, in Part III, a row of 3D objects. GSAP's SplitText plugin breaks text into lines, words and characters for you, and it's now free. The hero title on this page uses a hand-rolled version of the same idea.</p></div>
+    </section>
+
+    <section class="ch prose" id="pointer">
+      <h3><span class="n">05</span>Following the hand: quickTo and smoothing</h3>
+      <p>Much of what makes a site feel alive is how it responds to the pointer: a cursor follower that trails behind, a button that leans toward you, a 3D scene that shifts as your mouse moves. The underlying idea is always the same. You keep a <em>target</em> (where the pointer is) separate from the <em>current</em> value (where the thing is), and every frame you move current part of the way toward target. The lag is the feeling.</p>
+      <p>The classic way to write that is a lerp, <code>current += (target - current) * 0.1</code>, run every frame. It works, but it's tied to frame rate: on a 120Hz screen it catches up twice as fast as on a 60Hz one. GSAP's <code>quickTo()</code> solves this the time-based way. It creates one reusable tween for a single property, and every call retargets it without making a new tween. It's built for exactly this job, firing on every <code>pointermove</code>.</p>
+
+      <div class="bench" id="b-pointer">
+        <div class="bench-head"><span><b>Bench 05</b> · follower &amp; magnet</span><span>move your pointer over both panels</span></div>
+        <div class="bench-body">
+          <div class="pointer-row">
+            <div class="pad" id="t5-pad"><div class="f-ring" id="t5-ring"></div><div class="f-dot" id="t5-dot"></div><span class="hint">follower</span></div>
+            <div class="pad mag-wrap" id="t5-magpad"><button class="mag" id="t5-mag"><span>Hold near</span></button><span class="hint">magnetic button</span></div>
+          </div>
+          <div class="controls">
+            <label for="t5-lag">ring lag <input type="range" id="t5-lag" min="0.05" max="1.5" step="0.05" value="0.6"><output id="t5-lag-out">0.60s</output></label>
+            <label for="t5-pull">magnet pull <input type="range" id="t5-pull" min="0" max="0.7" step="0.05" value="0.35"><output id="t5-pull-out">0.35</output></label>
+          </div>
+          <pre class="code live-code" id="t5-code"></pre>
+        </div>
+      </div>
+
+      <p>The two followers differ only in duration. The dot uses about a tenth of a second and feels attached. The ring uses whatever you set and feels like it's being pulled on a string. That pairing, one tight and one loose, is a common pattern, because the eye reads the gap between them as physical weight.</p>
+      <p>The magnetic button uses plain <code>gsap.to()</code> calls with <code>overwrite: "auto"</code>. Each new call kills the conflicting part of the previous one, so you never get two tweens fighting over the same property. The label moves further than the button, a little parallax inside the object, and the release uses <code>elastic.out</code> so it snaps home with some life. This is one of the few places where elastic earns its keep.</p>
+      <div class="callout trap"><span class="tag">Trap</span><p>Touch screens have no hover, so pointer effects should be enhancements, never the only way something works. Gate them with <code>matchMedia("(hover: hover) and (pointer: fine)")</code>, or better, with <code>gsap.matchMedia()</code> (covered in Chapter 12). Be careful about hiding the system cursor for a custom one. Juries and real users both notice when a creative cursor makes a site harder to use.</p></div>
+    </section>
+
+    <section class="ch prose" id="svg">
+      <h3><span class="n">06</span>Drawing with strokes</h3>
+      <p>The line-drawing effect, where an illustration appears to be drawn by hand, is one of the oldest tricks in web animation, and it's worth understanding at the level of the underlying math because the trick generalizes. An SVG stroke can be dashed with <code>stroke-dasharray</code>. If you make a single dash exactly as long as the whole path, followed by a gap of the same length, the stroke looks solid. Then <code>stroke-dashoffset</code> slides that pattern along the path. Offset it by the full length and you're looking at the gap, so the line is invisible. Animate the offset to zero and the dash slides into place, drawing the line.</p>
+
+      <div class="bench" id="b-svg">
+        <div class="bench-head"><span><b>Bench 06</b> · a sprig, drawn</span><span>six paths, one stagger</span></div>
+        <div class="bench-body">
+          <svg class="sprig" id="t6-svg" viewBox="0 0 400 230" role="img" aria-label="Line drawing of a leafy sprig">
+            <path id="t6-stem" d="M40 200 C 120 180, 200 120, 360 40"/>
+            <path d="M89 183 C 80 160, 95 140, 118 132 C 118 155, 106 175, 89 183"/>
+            <path d="M141 158 C 160 170, 180 190, 202 190 C 192 170, 168 158, 141 158"/>
+            <path d="M201 125 C 195 100, 210 80, 236 72 C 236 96, 222 116, 201 125"/>
+            <path d="M273 85 C 292 96, 312 112, 334 112 C 324 92, 300 84, 273 85"/>
+            <path class="bud" d="M360 40 C 366 30, 380 32, 378 44 C 374 54, 362 52, 360 40"/>
+          </svg>
+          <div class="controls">
+            <label for="t6-p">draw <input type="range" id="t6-p" min="0" max="1" step="0.001" value="1"><output id="t6-p-out">100%</output></label>
+            <button class="btn primary" id="t6-play">Draw it</button>
+          </div>
+          <div class="readout"><span>stem length <b id="t6-len">0</b></span><span>dasharray <b id="t6-da">0</b></span><span>dashoffset <b id="t6-do">0</b></span></div>
+          <pre class="code">const paths = document.querySelectorAll(".sprig path");
+paths.forEach(p =&gt; {
+  const len = p.getTotalLength();          // measured in SVG user units
+  p.style.strokeDasharray = len;           // one dash the length of the path
+  p.style.strokeDashoffset = len;          // slid fully out of view
+});
+gsap.to(paths, {
+  strokeDashoffset: 0,
+  duration: 1.4, ease: "power2.inOut",
+  stagger: { each: 0.18 }                  // stem first, then each leaf
+});</pre>
+        </div>
+      </div>
+
+      <p>Once you've seen it this way, the effect becomes a material you can work with. You can draw from the middle outward, draw only a segment that travels along the path like a comet, or reverse the direction. GSAP's DrawSVG plugin handles all of that with friendlier syntax, like <code>drawSVG: "40% 60%"</code>, and it deals with edge cases such as non-scaling strokes. MorphSVG, also free now, interpolates one path shape into another, which is how logos melt into icons. Learn the raw version first so you always know what the plugin is doing for you.</p>
+      <div class="callout trap"><span class="tag">Trap</span><p><code>getTotalLength()</code> returns the length in the SVG's own coordinate units. If you add <code>vector-effect: non-scaling-stroke</code> or scale the SVG unevenly, the dash lengths stop matching what you see on screen. Fills don't draw, only strokes do, so a filled illustration needs either an outline version or a clip-path or mask reveal.</p></div>
+    </section>
+
+    <section class="ch prose" id="scroll">
+      <h3><span class="n">07</span>Scroll as a timeline scrubber</h3>
+      <p>ScrollTrigger is the plugin behind most scroll-driven sites. It connects a region of the page to an animation, and there are only four ideas to master. A <em>trigger</em> is the element whose position you track. <code>start</code> and <code>end</code> say when the effect is active, each written as two words: a point on the trigger, then a point in the viewport. <code>start: "top 80%"</code> means "when the top of the trigger reaches 80% of the way down the viewport." And then you choose whether scrolling <em>plays</em> the animation or <em>scrubs</em> it.</p>
+
+      <div class="bench" id="b-scroll">
+        <div class="bench-head"><span><b>Bench 07</b> · scroll inside the box</span><span>markers show start &amp; end</span></div>
+        <div class="bench-body">
+          <div class="scroller" id="t7-scroller">
+            <div class="pad-top">scroll down inside this box ↓</div>
+            <div class="trig" id="t7-trigger">
+              <div class="st-card" id="t7-card">
+                <h5>Growth, by scroll</h5>
+                <div class="st-bar"><i id="t7-bar"></i></div>
+                <div class="st-stem" id="t7-stem"></div>
+              </div>
+            </div>
+            <div class="pad-bot">end of the scroll region</div>
+          </div>
+          <div class="controls">
+            <label for="t7-scrub">scrub <select id="t7-scrub"><option value="false">false (play on enter)</option><option value="true" selected>true (locked to scroll)</option><option value="1">1 (1s catch-up)</option><option value="2.5">2.5 (heavy)</option></select></label>
+            <label for="t7-start">start <select id="t7-start"><option>top 80%</option><option selected>top center</option><option>top top</option></select></label>
+            <label for="t7-end">end <select id="t7-end"><option>bottom 20%</option><option selected>bottom center</option><option>+=200</option></select></label>
+            <label for="t7-pin"><input type="checkbox" id="t7-pin"> pin the card</label>
+          </div>
+          <div class="readout"><span>progress <b id="t7-prog">0.000</b></span><span>direction <b id="t7-dir">·</b></span><span>active <b id="t7-act">no</b></span></div>
+          <pre class="code live-code" id="t7-code"></pre>
+        </div>
+      </div>
+
+      <h4>Play versus scrub</h4>
+      <p>Without <code>scrub</code>, the animation plays at its own speed when the trigger enters, and <code>toggleActions</code> decides what happens at the four crossing points. The string lists them in order: entering forward, leaving forward, entering back, and leaving back. <code>"play none none reverse"</code> means play once on entry and reverse only when scrolling back above the start. With <code>scrub: true</code>, scroll position <em>is</em> the timeline's progress, so the user's thumb becomes the playhead. A number like <code>scrub: 1</code> adds smoothing: the animation takes one second to catch up to the scrollbar, which softens jerky trackpad and wheel input. That smoothing is a large part of why some scroll sites feel expensive and others feel twitchy.</p>
+      <h4>Pinning</h4>
+      <p><code>pin</code> holds an element in place while the scroll continues, so the user scrolls <em>through</em> an animation rather than past it. ScrollTrigger adds padding (<code>pinSpacing</code>) so the content after it doesn't slide underneath. Pinned sections with a scrubbed timeline are the backbone of scroll-told product stories: the section freezes, the product rotates and parts label themselves, then the page releases and moves on. Turn on pinning in the bench with scrub set to true and watch the markers.</p>
+      <div class="callout trap"><span class="tag">Trap</span><p>ScrollTrigger measures positions when it's created. If images, fonts or CMS content change the layout afterward, those measurements go stale, and things fire in the wrong place. Call <code>ScrollTrigger.refresh()</code> after late layout changes, and use <code>markers: true</code> during development so you can see the lines. Also be cautious with scroll hijacking. Smooth-scroll libraries like Lenis and GSAP's ScrollSmoother are popular on award sites, but taking control of native scrolling has real usability costs, and it's a deliberate design decision, not a default.</p></div>
+    </section>
+
+    <!-- ================= PART II ================= -->
+    <div class="part-head"><span class="num">Part II</span><h2>Matter</h2><p>Three.js, mapped onto the 3D knowledge you already have.</p></div>
+
+    <section class="ch prose" id="scene">
+      <h3><span class="n">08</span>The scene, translated from your 3D days</h3>
+      <p>Three.js is a 3D package without a user interface. Everything you did with menus and viewports, you do with objects in code, but the concepts are the ones you know. Here's the translation.</p>
+      <div class="table-wrap"><table>
+        <thead><tr><th>You know it as</th><th>Three.js</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td>Scene / world</td><td><code>Scene</code></td><td>The root of a hierarchy. Everything visible is added to it.</td></tr>
+          <tr><td>Null / group / parent</td><td><code>Group</code>, <code>Object3D</code></td><td>Children inherit transforms. Rigging works the same way.</td></tr>
+          <tr><td>Model</td><td><code>Mesh</code> = <code>Geometry</code> + <code>Material</code></td><td>Shape and surface are separate objects, so you can share either.</td></tr>
+          <tr><td>Camera</td><td><code>PerspectiveCamera(fov, aspect, near, far)</code></td><td>The <em>vertical</em> field of view in degrees. More on that below.</td></tr>
+          <tr><td>Render engine</td><td><code>WebGLRenderer</code></td><td>Draws scene + camera into a canvas. You call it every frame.</td></tr>
+          <tr><td>Lights</td><td><code>DirectionalLight</code>, <code>PointLight</code>, <code>SpotLight</code>, <code>HemisphereLight</code></td><td>Directional is your sun or key; hemisphere is a cheap sky-and-ground fill.</td></tr>
+          <tr><td>Units</td><td>Unitless</td><td>The convention is 1 unit = 1 meter. Y is up, and the system is right-handed.</td></tr>
+          <tr><td>Rendering a frame</td><td><code>renderer.render(scene, camera)</code></td><td>There's no "render" button. You redraw on every animation frame.</td></tr>
+        </tbody>
+      </table></div>
+
+      <div class="bench" id="b-scene">
+        <div class="bench-head"><span><b>Bench 08</b> · a still life</span><span>drag to orbit</span></div>
+        <div class="bench-body">
+          <div class="stage3d" id="t8-stage"><span class="tip">drag to orbit</span></div>
+          <div class="controls">
+            <label for="t8-fov">fov <input type="range" id="t8-fov" min="12" max="90" step="1" value="35"><output id="t8-fov-out">35°</output></label>
+            <label for="t8-dolly"><input type="checkbox" id="t8-dolly" checked> dolly to keep framing</label>
+            <label for="t8-wire"><input type="checkbox" id="t8-wire"> wireframe</label>
+            <label for="t8-help"><input type="checkbox" id="t8-help"> axes &amp; grid</label>
+          </div>
+          <div class="readout"><span>focal length <b id="t8-focal">0</b>mm (35mm gauge)</span><span>camera distance <b id="t8-dist">0</b></span><span>triangles <b id="t8-tris">0</b></span></div>
+        </div>
+      </div>
+
+      <p>Push the field of view from 90 down to 12 with dolly turned on. The objects stay the same size in frame while the perspective flattens and the background seems to rush toward you. That's the dolly zoom from <em>Vertigo</em>, and it shows that field of view and camera distance are separate creative choices, just as they are with a physical lens. Three.js's field of view is vertical, while many 3D packages and cameras talk in focal length. <code>camera.setFocalLength(mm)</code> converts for you using a 35mm film gauge, and the readout shows the equivalent. Wide angles around 18 to 24mm feel dramatic and close. Long lenses around 85 to 135mm feel calm, compressed and product-like. Much of the "premium" 3D on the web is shot with a fairly long lens.</p>
+      <p>The setup every Three.js scene shares is short enough to memorize:</p>
+      <pre class="code">const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));   // cap at 2, see Chapter 10
+container.appendChild(renderer.domElement);
+
+const scene  = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(35, w / h, 0.1, 100);
+camera.position.set(6, 3, 7);
+camera.lookAt(0, 0.7, 0);
+
+const sphere = new THREE.Mesh(
+  new THREE.SphereGeometry(0.7, 64, 32),                       // radius, width & height segments
+  new THREE.MeshStandardMaterial({ color: "#6f7f4a", roughness: 0.45 })
+);
+scene.add(sphere);
+
+gsap.ticker.add(() =&gt; renderer.render(scene, camera));       // one clock for GSAP and Three</pre>
+      <p>Wireframe mode shows the tessellation, and the triangle count tells you what the GPU is processing. Curved surfaces are approximations, and the segment counts in each geometry constructor control the trade between smoothness and cost. The sphere here uses 64 by 32 segments. That's generous for a hero object and wasteful for something small in the background.</p>
+    </section>
+
+    <section class="ch prose" id="light">
+      <h3><span class="n">09</span>Light, material, and the real-time compromise</h3>
+      <p>Your three-point lighting knowledge transfers directly. What has changed most since you last worked in 3D is the material model. Older renderers used Phong and Blinn shading, with specular color, specular size and glossiness set by eye. Modern real-time engines, Three.js included, use <em>physically based rendering</em>. <code>MeshStandardMaterial</code> describes a surface with a base color, a <code>roughness</code> from mirror-smooth (0) to fully matte (1), and a <code>metalness</code> that's usually either 0 (a dielectric like plastic, stone or wood) or 1 (a metal). The shading model conserves energy, so a rougher surface spreads the same reflected light over a wider highlight, and you rarely have to fight the material to look believable.</p>
+
+      <div class="bench" id="b-light">
+        <div class="bench-head"><span><b>Bench 09</b> · a lighting rig</span><span>key · fill · rim</span></div>
+        <div class="bench-body">
+          <div class="stage3d" id="t9-stage"><span class="tip">drag to orbit · the small dot is the key light</span></div>
+          <div class="controls">
+            <label for="t9-az">key angle <input type="range" id="t9-az" min="0" max="360" step="1" value="40"><output id="t9-az-out">40°</output></label>
+            <label for="t9-el">key height <input type="range" id="t9-el" min="5" max="85" step="1" value="42"><output id="t9-el-out">42°</output></label>
+            <label for="t9-key">key <input type="range" id="t9-key" min="0" max="4" step="0.05" value="1.6"><output id="t9-key-out">1.60</output></label>
+            <label for="t9-fill">fill <input type="range" id="t9-fill" min="0" max="2" step="0.05" value="0.45"><output id="t9-fill-out">0.45</output></label>
+            <label for="t9-rim">rim <input type="range" id="t9-rim" min="0" max="5" step="0.05" value="1.2"><output id="t9-rim-out">1.20</output></label>
+            <label for="t9-temp">key color <select id="t9-temp"><option value="ffd6a0">warm 3200K-ish</option><option value="fff3e2" selected>daylight-ish</option><option value="d6e4ff">overcast blue</option></select></label>
+          </div>
+          <div class="controls">
+            <label for="t9-rough">sphere roughness <input type="range" id="t9-rough" min="0" max="1" step="0.01" value="0.45"><output id="t9-rough-out">0.45</output></label>
+            <label for="t9-metal">sphere metalness <input type="range" id="t9-metal" min="0" max="1" step="0.01" value="0"><output id="t9-metal-out">0.00</output></label>
+            <label for="t9-shadow"><input type="checkbox" id="t9-shadow" checked> shadows</label>
+            <label for="t9-tone">tone mapping <select id="t9-tone"><option value="aces" selected>ACES filmic</option><option value="none">none</option></select></label>
+            <label for="t9-exp">exposure <input type="range" id="t9-exp" min="0.3" max="2" step="0.05" value="1"><output id="t9-exp-out">1.00</output></label>
+          </div>
+        </div>
+      </div>
+
+      <h4>Three experiments to run on the bench</h4>
+      <p>First, push sphere metalness to 1. The sphere goes dark and dull. That isn't a bug. A metal has no diffuse color of its own and shows only what it reflects, and this scene has no environment to reflect. That's why convincing metal on the web nearly always uses an <em>environment map</em>, usually an HDRI, loaded with <code>RGBELoader</code> and assigned to <code>scene.environment</code>. Environment lighting is also the single biggest quality jump you can give a real-time scene.</p>
+      <p>Second, turn the rim light to zero, then back up. Watch the silhouettes separate from the background. That's the same job rim lights did for you twenty years ago, and it matters even more on a web page, where the background is often a flat page color.</p>
+      <p>Third, switch tone mapping between ACES filmic and none, with the key light at 4. Without tone mapping, bright values simply clip to white. ACES compresses highlights the way film does, so a strong key reads as bright without burning out. Tone mapping, together with the correct color space (sRGB output, which this page sets), is the difference between a scene that looks like a render and one that looks like a cheap web demo.</p>
+
+      <h4>Shadows are a second render</h4>
+      <p>A real-time shadow is a <em>shadow map</em>. The renderer draws the scene a second time from the light's point of view, storing depth, and then checks each pixel against that depth map. That has consequences you can reason about. The map has a resolution (<code>light.shadow.mapSize</code>), so shadows get blocky when the shadow camera covers too large an area. Tighten the light's shadow camera bounds around your subject. A depth comparison that's too strict produces striped <em>shadow acne</em>, and the <code>bias</code> and <code>normalBias</code> settings fix it, but too much bias makes shadows detach from their objects, an artifact nicknamed peter-panning. Every shadow-casting light adds another render pass, so most polished scenes use one shadow-casting light at most.</p>
+      <div class="callout"><span class="tag">How award sites get their lighting</span><p>Many of the most beautiful 3D sites aren't computing much lighting at all in the browser. The artists light the scene in Blender, <em>bake</em> the lighting and soft shadows into textures, and export the model as glTF. The browser then just displays pre-lit surfaces, which looks like an offline render and costs almost nothing per frame. Your background in offline 3D is directly useful here. The pipeline is Blender, then glTF (often compressed with Draco or Meshopt), then <code>GLTFLoader</code> in Three.js.</p></div>
+    </section>
+
+    <section class="ch prose" id="loop">
+      <h3><span class="n">10</span>The render loop and the frame budget</h3>
+      <p>Offline rendering let you wait. Real-time rendering gives you a hard deadline, and every frame has to finish inside it, or the animation stutters. At 60Hz the whole frame, meaning your JavaScript, GSAP's updates, the browser's own work, and the GPU drawing your scene, has about 16.7 milliseconds. At 120Hz it has about 8.3. Most performance decisions in Three.js come down to protecting that budget.</p>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Cost</th><th>Why it's expensive</th><th>What professionals do</th></tr></thead>
+        <tbody>
+          <tr><td>Pixels</td><td>The GPU shades every pixel. A 2× retina screen has 4× the pixels, and a 3× phone has 9×.</td><td>Cap <code>setPixelRatio</code> at 2, or lower it adaptively when frames run slow.</td></tr>
+          <tr><td>Draw calls</td><td>Each separate mesh and material is roughly one instruction batch for the GPU.</td><td>Merge static geometry, and use <code>InstancedMesh</code> for many copies of one object.</td></tr>
+          <tr><td>Shadow maps</td><td>Each shadow-casting light renders the scene again.</td><td>Use one shadow light, bake the rest, or fake contact shadows with a blurred texture.</td></tr>
+          <tr><td>Overdraw &amp; transparency</td><td>Layers of transparent surfaces shade the same pixel many times.</td><td>Keep transparency limited and use alpha testing for foliage-style cutouts.</td></tr>
+          <tr><td>Memory</td><td>GPU memory isn't garbage-collected for you.</td><td>Call <code>.dispose()</code> on geometries, materials and textures you remove.</td></tr>
+          <tr><td>Hidden work</td><td>A canvas below the fold still renders 60 times a second.</td><td>Pause rendering when it's off screen, using <code>IntersectionObserver</code>.</td></tr>
+        </tbody>
+      </table></div>
+      <p>Every 3D bench on this page follows those rules. Each caps its pixel ratio, renders only while visible, and draws from GSAP's ticker, so the motion clock and the render clock are the same clock. When something must be animated outside GSAP, like an idle rotation, multiply its speed by the frame's <em>delta time</em> (the seconds since the last frame) so it moves at the same real speed at 60Hz and 120Hz. The ticker hands you that value directly.</p>
+      <pre class="code">gsap.ticker.add((time, deltaMS) =&gt; {
+  if (!visible) return;                       // set by an IntersectionObserver
+  const dt = deltaMS / 1000;                  // seconds since last frame
+  idleObject.rotation.y += 0.4 * dt;          // 0.4 rad per second at any refresh rate
+  renderer.render(scene, camera);
+});
+
+// resize with the container, not the window
+new ResizeObserver(() =&gt; {
+  const { clientWidth: w, clientHeight: h } = container;
+  renderer.setSize(w, h);
+  camera.aspect = w / h;
+  camera.updateProjectionMatrix();
+}).observe(container);</pre>
+      <div class="callout trap"><span class="tag">Trap</span><p>Some visitors' devices can't create a WebGL context at all, or will lose it when memory is low. Wrap renderer creation in <code>try/catch</code> and design a real fallback, like a poster image or a video. Treat that fallback as part of the design, not an error message. Also, a note on versions: this page loads Three.js r149 because it's one of the last releases with a classic script build. Current releases are ES modules only (<code>import * as THREE from "three"</code>), and later versions renamed some color-management settings and changed the default light intensity units. Concepts here carry over, but check the migration notes when you copy settings into a modern project.</p></div>
+    </section>
+
+    <!-- ================= PART III ================= -->
+    <div class="part-head"><span class="num">Part III</span><h2>Direction</h2><p>Where the two halves meet. GSAP choreographs, and Three.js renders.</p></div>
+
+    <section class="ch prose" id="director">
+      <h3><span class="n">11</span>GSAP as the director of a 3D scene</h3>
+      <p>Here's the connection that makes everything above one craft. GSAP doesn't care what it animates. It tweens any numeric property of any JavaScript object. A Three.js mesh's position is an object with <code>x</code>, <code>y</code> and <code>z</code>. A light has <code>intensity</code>. A material's color has <code>r</code>, <code>g</code> and <code>b</code>. So <code>gsap.to(mesh.position, { y: 2 })</code> just works. GSAP changes the number, and on the next frame the renderer draws the mesh in its new place. Timelines, eases, staggers and ScrollTrigger all come along for free.</p>
+
+      <div class="bench" id="b-director">
+        <div class="bench-head"><span><b>Bench 11</b> · a reveal, directed</span><span>move your pointer over the scene</span></div>
+        <div class="bench-body">
+          <div class="stage3d" id="t11-stage"><span class="tip">pointer = camera parallax</span></div>
+          <div class="controls">
+            <button class="btn primary" id="t11-play">Play the reveal</button>
+            <button class="btn" id="t11-rev">Reverse</button>
+            <label for="t11-cam">camera ease <select id="t11-cam"><option selected>power2.inOut</option><option>expo.inOut</option><option>sine.inOut</option><option>none</option></select></label>
+            <label for="t11-from">rise from <select id="t11-from"><option selected>center</option><option>start</option><option>edges</option><option>random</option></select></label>
+          </div>
+          <input type="range" class="scrub" id="t11-scrub" min="0" max="1000" value="1000" aria-label="Reveal timeline progress">
+          <div class="gantt" id="t11-gantt"></div>
+        </div>
+      </div>
+
+      <h4>The camera rig pattern</h4>
+      <p>The camera isn't tweened directly. Tweening <code>camera.position</code> moves it in a straight line through space, which usually looks wrong, and you'd also have to keep re-aiming it. Instead the bench tweens a small plain object of <em>abstract parameters</em>, an orbit angle, a radius and a height, and every frame converts those into a camera position and a <code>lookAt</code>. Tweening the angle produces a true arc around the subject. That's the same idea as parenting a camera to a rotating null, and it's how most directed web cameras are built.</p>
+      <pre class="code">const rig = { angle: 0.35, radius: 7.5, height: 2.2, px: 0, py: 0 };
+
+gsap.ticker.add(() =&gt; {
+  camera.position.set(
+    Math.sin(rig.angle) * rig.radius + rig.px,
+    rig.height + rig.py,
+    Math.cos(rig.angle) * rig.radius
+  );
+  camera.lookAt(0, 0.9, 0);
+  renderer.render(scene, camera);
+});
+
+const tl = gsap.timeline();
+tl.fromTo(rig, { angle: -1.1, radius: 11, height: 4.2 },
+               { angle: 0.35, radius: 7.5, height: 2.2, duration: 3.2, ease: "power2.inOut" }, 0)
+  .fromTo(key, { intensity: 0 }, { intensity: 2.4, duration: 1.6, ease: "sine.inOut" }, 0.2)
+  .fromTo(slabs.map(s =&gt; s.position), { y: -1.2 },
+          { y: 0.9, duration: 1.1, ease: "back.out(1.3)", stagger: { each: 0.12, from: "center" } }, 0.5)
+  .fromTo(slabs.map(s =&gt; s.rotation), { y: -Math.PI / 2 },
+          { y: 0, duration: 1.2, ease: "power3.inOut", stagger: { each: 0.12, from: "center" } }, "&lt;0.35")
+  .addLabel("accent")
+  .fromTo(rim, { intensity: 0 }, { intensity: 3, duration: 1 }, "accent-=0.6")
+  .to(centerSlab.material.color, { r: brass.r, g: brass.g, b: brass.b, duration: 0.8 }, "accent-=0.2");</pre>
+      <p>Look at what's in that timeline. The stagger from Chapter 4 runs on an array of <code>Vector3</code> objects instead of DOM elements. The position parameters from Chapter 3 overlap the camera move, the key light, and the slabs so they read as one gesture. The color tween animates a material's red, green and blue channels. Notice also that the camera uses <code>inOut</code> because it moves within the frame, while the slabs use <code>back.out</code> because they're arriving.</p>
+
+      <h4>Pointer parallax, layered on top</h4>
+      <p>The timeline owns <code>angle</code>, <code>radius</code> and <code>height</code>. The pointer owns <code>px</code> and <code>py</code>, through <code>gsap.quickTo(rig, "px", { duration: 1.2, ease: "power3" })</code>. Because they control different properties, they never fight, and the camera drifts with your hand even mid-reveal. Splitting control into separate channels that get added together is a pattern that scales: one channel for the authored animation, one for the user's input, and one for idle motion.</p>
+
+      <h4>Driving it with scroll instead</h4>
+      <p>Everything you scrubbed with the slider can be driven by scroll by adding one ScrollTrigger to the same timeline. This is how the "scroll through the product" sites are built.</p>
+      <pre class="code">ScrollTrigger.create({
+  trigger: ".reveal-section",
+  start: "top top",
+  end: "+=2000",          // 2000px of scrolling plays the whole reveal
+  pin: true,              // the canvas stays put while the story plays
+  scrub: 1,               // one second of smoothing
+  animation: tl
+});</pre>
+    </section>
+
+    <!-- ================= PART IV ================= -->
+    <div class="part-head"><span class="num">Part IV</span><h2>Craft</h2><p>The parts that tools don't teach.</p></div>
+
+    <section class="ch prose" id="award">
+      <h3><span class="n">12</span>What separates award-level work</h3>
+      <p>It helps to know how the most visible jury judges. Awwwards, as far as I know, scores sites on design, usability, creativity and content, weighted roughly 40, 30, 20 and 10 percent. Check their current criteria before relying on that, but the shape of it is telling. Usability carries more weight than creativity. The sites that win are rarely the ones with the most effects. They're the ones where a single strong idea is carried through with consistency and the whole thing still works.</p>
+      <h4>One idea, carried all the way through</h4>
+      <p>Look at Ksenia's Paper Mono magazine. It's one idea: pages that bend like paper. Then she spent, in her words, a ridiculous amount of time on the deformation, layering lift, curl, waves and noise until it felt real. That's the pattern. Pick the most characteristic thing in your subject's world, make it the centerpiece, and keep everything around it quiet. For a GPU cloud, that might be something only a GPU can do in real time, rendered right there in the visitor's browser.</p>
+      <h4>A motion language, written down</h4>
+      <p>Studios write a motion spec the same way they write a type scale. It names a few eases, a few durations, and rules for entrances, exits and hovers. In GSAP you can encode it so it's enforced everywhere:</p>
+      <pre class="code">gsap.registerEase("arrive", gsap.parseEase("expo.out"));
+gsap.registerEase("leave",  gsap.parseEase("power2.in"));
+gsap.defaults({ ease: "arrive", duration: 1.1 });
+
+const DUR = { quick: 0.25, base: 0.7, slow: 1.4 };   // three durations, used everywhere</pre>
+      <h4>Respect for the person on the other end</h4>
+      <p>Some people get motion sickness from large movement, and they tell their operating system so. <code>gsap.matchMedia()</code> lets you write different animation for different conditions and automatically cleans up when conditions change:</p>
+      <pre class="code">const mm = gsap.matchMedia();
+mm.add({
+  full:    "(prefers-reduced-motion: no-preference)",
+  reduced: "(prefers-reduced-motion: reduce)",
+  fine:    "(hover: hover) and (pointer: fine)"
+}, (ctx) =&gt; {
+  const { full, reduced, fine } = ctx.conditions;
+  gsap.from(".hero .ch", full ? { yPercent: 110, stagger: 0.04 } : { autoAlpha: 0, duration: 0.4 });
+  if (fine) initMagneticButtons();
+});</pre>
+      <p>Reduced motion doesn't have to mean no motion. Fades and small changes in opacity are generally fine. Large translations, parallax, zooms and spinning are what to remove. The hero title on this page follows that rule.</p>
+      <h4>Learning by taking things apart</h4>
+      <p>The fastest way to develop taste is to study work you admire at a speed where you can actually see it. Open the browser console on a GSAP-built site and run <code>gsap.globalTimeline.timeScale(0.2)</code>. Everything slows to a fifth of its speed, and you can watch the overlaps and eases (the slow-motion checkbox in the index does this to this page). Chrome's DevTools also has an Animations panel for CSS and Web Animations, and the Performance panel shows whether a site is keeping inside its frame budget. When something feels great, write down why in animator's terms: what eased, what overlapped, what anticipated.</p>
+      <h4>Applying it in Webflow</h4>
+      <p>GSAP and Webflow are now the same company, and Webflow has been building GSAP into its Interactions panel. How much you can do natively there changes quickly, so check the current state. For anything beyond it, load GSAP and its plugins in the site's custom code and write the code yourself, exactly as on this page. Three.js goes the same way: an empty div in the Designer as the container, the library from a CDN, and your scene script mounting into that div. Use Webflow's classes or data attributes as your selectors, and wrap everything in <code>gsap.context()</code> or <code>gsap.matchMedia()</code> so it cleans up properly.</p>
+    </section>
+
+    <section class="ch prose" id="practice">
+      <h3><span class="n">13</span>A practice plan</h3>
+      <p>Mastery here comes from making many small things, each one targeting a specific skill, more than from reading. Ksenia built her reputation on unpaid, playful pens made between projects. The studies below are ordered so each one adds one new idea. Give each an evening or a weekend, keep them small, and post the ones you like. A body of small, finished experiments teaches more and gets noticed more than one large unfinished project.</p>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Study</th><th>What it trains</th><th>Constraint that makes it hard</th></tr></thead>
+        <tbody>
+          <tr><td>1 · Ten eases, one square</td><td>Feel for spacing</td><td>Animate one square across the screen ten ways and name what each feels like (eager, heavy, nervous). No color, no shapes, just timing.</td></tr>
+          <tr><td>2 · A headline arrival</td><td>Split text, stagger, overlap</td><td>Make a five-word headline arrive in under 1.5 seconds so it feels inevitable. Try ten variations and keep one.</td></tr>
+          <tr><td>3 · A card that assembles</td><td>Timelines and the position parameter</td><td>Five elements, one timeline, and it must reverse gracefully when hovered off.</td></tr>
+          <tr><td>4 · A cursor with weight</td><td>quickTo, layered smoothing</td><td>The follower must feel like it has mass. Add a velocity-based squash using the distance it lags.</td></tr>
+          <tr><td>5 · A scroll story in three beats</td><td>ScrollTrigger, pinning, scrub</td><td>One pinned section where three things happen. It must work with a trackpad, a mouse wheel, and the keyboard.</td></tr>
+          <tr><td>6 · One object, beautifully lit</td><td>Three.js scene, PBR, HDRI, tone mapping</td><td>A single sphere or simple product shape that looks like a photograph. No animation allowed until the still is right.</td></tr>
+          <tr><td>7 · A directed reveal</td><td>GSAP driving Three.js, camera rig</td><td>Rebuild Bench 11 with your own objects, then drive it with scroll.</td></tr>
+          <tr><td>8 · A baked scene from Blender</td><td>glTF pipeline, baked lighting</td><td>Model and bake a small room or still life, export it, and keep it at 60fps on a mid-range laptop.</td></tr>
+          <tr><td>9 · Your first fragment shader</td><td>GLSL on a full-screen plane</td><td>A moving gradient driven by time and mouse position. This is where LiquidMetal starts.</td></tr>
+        </tbody>
+      </table></div>
+      <div class="callout"><span class="tag">Using AI as a studio partner</span><p>Given your aim of working AI-first, there's a productive way to pair it with this. Ask an AI model for a first-pass implementation of the mechanics, then spend your own time on the timing, the easing and the lighting. Those are the decisions that make work feel crafted, and they're the ones a jury notices. Asking the model to <em>explain</em> code it wrote in terms of the concepts here, such as the position parameter, spacing, and the camera rig, is also a fast way to make sure the understanding stays with you.</p></div>
+    </section>
+
+    <section class="ch prose" id="reference">
+      <h3><span class="n">A</span>Reference tables</h3>
+      <h4>ScrollTrigger start and end</h4>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Value</th><th>Fires when</th></tr></thead>
+        <tbody>
+          <tr><td><code>"top bottom"</code></td><td>The trigger's top edge enters the bottom of the viewport. This is the earliest useful start.</td></tr>
+          <tr><td><code>"top 80%"</code></td><td>The trigger's top reaches 80% of the way down the viewport. A comfortable default for reveals.</td></tr>
+          <tr><td><code>"top center"</code></td><td>The trigger's top reaches the middle of the viewport.</td></tr>
+          <tr><td><code>"top top"</code></td><td>The trigger's top reaches the top of the viewport. The usual start for pinning.</td></tr>
+          <tr><td><code>"center center"</code></td><td>The trigger's middle meets the viewport's middle.</td></tr>
+          <tr><td><code>"bottom top"</code></td><td>The trigger has fully left through the top. The usual end for parallax.</td></tr>
+          <tr><td><code>"+=1500"</code></td><td>As an <code>end</code>: 1500px of scrolling after the start. Good for pinned sequences.</td></tr>
+        </tbody>
+      </table></div>
+      <h4>Ease vocabulary</h4>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Ease</th><th>Character</th><th>Typical use</th></tr></thead>
+        <tbody>
+          <tr><td><code>power1–2.out</code></td><td>Natural and unfussy</td><td>Interface feedback, small moves</td></tr>
+          <tr><td><code>power3–4.out</code>, <code>expo.out</code></td><td>Confident and weighty</td><td>Hero entrances, editorial reveals</td></tr>
+          <tr><td><code>power2.inOut</code>, <code>sine.inOut</code></td><td>Smooth travel</td><td>Camera moves, carousels, looping drift</td></tr>
+          <tr><td><code>power2.in</code></td><td>Departing</td><td>Exits, things leaving the frame</td></tr>
+          <tr><td><code>back.out(1.2–2)</code></td><td>Overshoot and settle</td><td>Pop-ins, playful UI, follow-through</td></tr>
+          <tr><td><code>elastic.out(1, 0.3–0.5)</code></td><td>Springy</td><td>Small accents and releases only</td></tr>
+          <tr><td><code>steps(n)</code></td><td>Discrete</td><td>Sprite sheets, stop-motion, typewriter effects</td></tr>
+          <tr><td><code>none</code></td><td>Mechanical</td><td>Scroll-scrubbed timelines, continuous rotation</td></tr>
+        </tbody>
+      </table></div>
+      <h4>Where to read further</h4>
+      <p>The <a href="https://gsap.com/docs/v3/" target="_blank" rel="noopener">GSAP documentation</a> is excellent, and its section on the position parameter is worth reading twice. The <a href="https://threejs.org/manual/" target="_blank" rel="noopener">Three.js manual</a> covers fundamentals clearly. Bruno Simon's <a href="https://threejs-journey.com/" target="_blank" rel="noopener">Three.js Journey</a> is a paid course that many working creative developers credit, and it covers Blender baking and shaders in depth. <a href="https://tympanus.net/codrops/" target="_blank" rel="noopener">Codrops</a> publishes tutorials with source code you can take apart, including Ksenia's folding box. <a href="https://thebookofshaders.com/" target="_blank" rel="noopener">The Book of Shaders</a> is the usual first step into GLSL.</p>
+    </section>
+
+    <footer class="colophon">Built as a working reference. Every bench runs the real libraries: GSAP 3.13 with ScrollTrigger, and Three.js r149. Use the slow-motion switch in the index to study any demo frame by frame.</footer>
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.149.0/build/three.min.js"></script>
+<script>
+(function () {
+"use strict";
+if (!window.gsap) { document.querySelectorAll(".bench-body").forEach(b => b.insertAdjacentHTML("afterbegin", '<p class="readout">The animation library did not load. Check your connection and reload the page.</p>')); return; }
+gsap.registerPlugin(ScrollTrigger);
+
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+const tok = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/* ---------- tiny code highlighter ---------- */
+const esc = s => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+const KW = /\b(const|let|function|return|new|if|true|false)\b/g;
+function hl(src) {
+  const re = /(\/\/.*$)|("[^"\n]*"|'[^'\n]*'|`[^`\n]*`)/gm;
+  let out = "", last = 0, m;
+  while ((m = re.exec(src))) {
+    out += esc(src.slice(last, m.index)).replace(KW, '<span class="k">$1</span>');
+    out += m[1] ? '<span class="c">' + esc(m[1]) + "</span>" : '<span class="s">' + esc(m[2]) + "</span>";
+    last = re.lastIndex;
+  }
+  return out + esc(src.slice(last)).replace(KW, '<span class="k">$1</span>');
+}
+$$("pre.code:not(.live-code)").forEach(p => { p.innerHTML = hl(p.textContent); });
+const setCode = (el, text) => { el.innerHTML = hl(text); };
+
+/* ---------- theme changes: redraw canvases ---------- */
+const themeHooks = [];
+const fireTheme = () => themeHooks.forEach(f => f());
+window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", fireTheme);
+new MutationObserver(fireTheme).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+
+function fitCanvas(c) {
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const w = c.clientWidth, h = c.clientHeight || +c.getAttribute("height");
+  if (c.width !== Math.round(w * dpr)) { c.width = Math.round(w * dpr); c.height = Math.round(h * dpr); }
+  const ctx = c.getContext("2d");
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.clearRect(0, 0, w, h);
+  return { ctx, w, h };
+}
+$$("canvas.plot").forEach(c => { c.style.height = c.getAttribute("height") + "px"; });
+
+/* ---------- index: active chapter + mobile collapse + slow-mo ---------- */
+const tocLinks = $$(".index li a");
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) tocLinks.forEach(a => a.classList.toggle("active", a.getAttribute("href") === "#" + e.target.id));
+  });
+}, { rootMargin: "-30% 0px -60% 0px" });
+$$("section.ch").forEach(s => io.observe(s));
+const wide = window.matchMedia("(min-width: 961px)");
+const syncToc = () => { $("#toc-details").open = wide.matches; };
+syncToc(); wide.addEventListener("change", syncToc);
+$("#toc-details").addEventListener("click", e => { if (!wide.matches && e.target.closest("li a")) $("#toc-details").open = false; });
+$("#slowmo").addEventListener("change", e => gsap.globalTimeline.timeScale(e.target.checked ? 0.25 : 1));
+
+/* ---------- hero ---------- */
+(function hero() {
+  const h = $("#hero-title");
+  const parts = [];
+  h.childNodes.forEach(n => {
+    if (n.nodeType === 3) {
+      const frag = document.createDocumentFragment();
+      [...n.textContent].forEach(ch => {
+        if (ch === " ") { frag.appendChild(document.createTextNode(" ")); return; }
+        const s = document.createElement("span"); s.className = "ch"; s.setAttribute("aria-hidden", "true"); s.textContent = ch; frag.appendChild(s); parts.push(s);
+      });
+      parts.push(null); n.replaceWith(frag);
+    } else { n.classList.add("ch"); n.setAttribute("aria-hidden", "true"); parts.push(n); }
+  });
+  const chars = $$(".ch", h);
+  const mm = gsap.matchMedia();
+  mm.add({ full: "(prefers-reduced-motion: no-preference)", reduced: "(prefers-reduced-motion: reduce)" }, ctx => {
+    if (ctx.conditions.full) {
+      gsap.from(chars, { yPercent: 60, rotation: 6, autoAlpha: 0, duration: 1.3, ease: "expo.out", stagger: { each: 0.045, from: "start" }, delay: 0.15 });
+      gsap.from(".hero .lede, .hero .how", { autoAlpha: 0, y: 14, duration: 1, ease: "power3.out", stagger: 0.12, delay: 0.55 });
+    } else {
+      gsap.from(chars, { autoAlpha: 0, duration: 0.5, stagger: 0.02 });
+    }
+  });
+})();
+
+/* ---------- Gantt renderer (shared) ---------- */
+function makeGantt(el, getTl) {
+  let head, total = 1;
+  function build() {
+    const tl = getTl();
+    total = tl.duration() || 1;
+    const kids = tl.getChildren(false, true, true);
+    let html = '<div class="g-lane"><div class="g-head"></div></div>';
+    kids.forEach(k => {
+      const l = (k.startTime() / total) * 100, w = (k.totalDuration() / total) * 100;
+      html += `<div class="g-row"><span class="g-label">${(k.vars && k.vars.data) || "tween"}</span><div class="g-track"><div class="g-bar" style="left:${l}%;width:${Math.max(w, 0.8)}%"></div></div></div>`;
+    });
+    let ticks = "";
+    const step = total > 3 ? 1 : 0.5;
+    for (let t = 0; t <= total + 1e-6; t += step) ticks += `<span style="left:${(t / total) * 100}%">${t.toFixed(t % 1 ? 1 : 0)}s</span>`;
+    html += `<div class="g-ruler"><span></span><div class="g-ticks">${ticks}</div></div>`;
+    el.innerHTML = html;
+    head = $(".g-head", el);
+    update();
+  }
+  function update() { if (head) head.style.left = (getTl().progress() * 100) + "%"; }
+  return { build, update };
+}
+
+/* ======================= 01 TWEEN LAB ======================= */
+(function tweenLab() {
+  const track = $("#t1-track"), puck = $("#t1-puck"), plot = $("#t1-plot"), code = $("#t1-code");
+  const dur = $("#t1-dur"), durOut = $("#t1-dur-out");
+  let samples = [], cur = null, curD = 1.2, lastKind = "to";
+  const endX = () => Math.max(40, track.clientWidth - puck.offsetWidth);
+
+  function draw() {
+    const { ctx, w, h } = fitCanvas(plot);
+    const E = endX(), pad = { l: 8, r: 8, t: 10, b: 18 };
+    const X = t => pad.l + (t / curD) * (w - pad.l - pad.r);
+    const Y = x => h - pad.b - (x / E) * (h - pad.t - pad.b);
+    ctx.strokeStyle = tok("--rule"); ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(pad.l, h - pad.b); ctx.lineTo(w - pad.r, h - pad.b); ctx.moveTo(pad.l, pad.t); ctx.lineTo(pad.l, h - pad.b); ctx.stroke();
+    ctx.fillStyle = tok("--ink-soft"); ctx.font = "11px 'IBM Plex Mono', monospace";
+    ctx.fillText("time →", w - pad.r - 44, h - 4); ctx.fillText("x ↑", pad.l + 6, pad.t + 10);
+    ctx.fillStyle = tok("--brass");
+    samples.forEach(([t, x]) => { ctx.beginPath(); ctx.arc(X(t), Y(x), 2.6, 0, Math.PI * 2); ctx.fill(); });
+  }
+  function readout(p, x) {
+    $("#t1-prog").textContent = p.toFixed(3);
+    $("#t1-x").textContent = Math.round(x);
+    $("#t1-frames").textContent = samples.length;
+  }
+  function run(kind) {
+    lastKind = kind;
+    if (cur) cur.kill();
+    samples = []; curD = +dur.value;
+    const E = Math.round(endX());
+    gsap.set(puck, { x: 0 });
+    const vars = {
+      duration: curD, ease: "power2.inOut",
+      onUpdate() { const x = gsap.getProperty(puck, "x"); samples.push([this.time(), x]); readout(this.progress(), x); draw(); }
+    };
+    let text;
+    if (kind === "to") { cur = gsap.to(puck, { x: E, ...vars }); text = `gsap.to(".puck", { x: ${E}, duration: ${curD}, ease: "power2.inOut" });\n// animates from where it is (0) to ${E}`; }
+    if (kind === "from") { cur = gsap.from(puck, { x: E, ...vars }); text = `gsap.from(".puck", { x: ${E}, duration: ${curD}, ease: "power2.inOut" });\n// jumps to ${E} immediately, then returns to where it was (0)`; }
+    if (kind === "fromTo") { const a = Math.round(E * 0.25), b = Math.round(E * 0.75); cur = gsap.fromTo(puck, { x: a }, { x: b, ...vars }); text = `gsap.fromTo(".puck", { x: ${a} }, { x: ${b}, duration: ${curD}, ease: "power2.inOut" });\n// both ends spelled out, so the current position doesn't matter`; }
+    if (kind === "set") { cur = null; gsap.set(puck, { x: E }); samples = [[0, E]]; readout(1, E); draw(); text = `gsap.set(".puck", { x: ${E} });\n// a zero-duration tween: one frame, no motion`; }
+    setCode(code, text);
+  }
+  $$("#b-tween [data-kind]").forEach(b => b.addEventListener("click", () => run(b.dataset.kind)));
+  dur.addEventListener("input", () => { durOut.textContent = (+dur.value).toFixed(1) + "s"; });
+  setCode(code, `gsap.to(".puck", { x: 600, duration: 1.2, ease: "power2.inOut" });\n// press a button to run it`);
+  // resting state: a pre-sampled power2.inOut plot so the bench reads complete before any click
+  (function seed() {
+    const E = endX(), f = gsap.parseEase("power2.inOut"), n = Math.round(curD * 60);
+    for (let i = 0; i <= n; i++) samples.push([i / n * curD, f(i / n) * E]);
+    gsap.set(puck, { x: E }); readout(1, E); draw();
+  })();
+  new ResizeObserver(() => draw()).observe(plot);
+  themeHooks.push(draw);
+})();
+
+/* ======================= 02 EASE LAB ======================= */
+(function easeLab() {
+  const fam = $("#t2-fam"), type = $("#t2-type"), dur = $("#t2-dur"), curve = $("#t2-curve"), lanes = $("#t2-lanes");
+  let t = 1, anim = null;
+  const name = () => fam.value === "none" ? "none" : fam.value === "steps" ? "steps(6)" : `${fam.value}.${type.value}`;
+  let fn = gsap.parseEase(name());
+  function range() {
+    let lo = 0, hi = 1;
+    for (let i = 0; i <= 300; i++) { const v = fn(i / 300); lo = Math.min(lo, v); hi = Math.max(hi, v); }
+    return [lo - 0.06, hi + 0.06];
+  }
+  function drawCurve() {
+    const { ctx, w, h } = fitCanvas(curve);
+    const [lo, hi] = range(), p = { l: 34, r: 12, t: 12, b: 26 };
+    const X = u => p.l + u * (w - p.l - p.r), Y = v => h - p.b - ((v - lo) / (hi - lo)) * (h - p.t - p.b);
+    ctx.strokeStyle = tok("--rule"); ctx.lineWidth = 1; ctx.setLineDash([3, 4]);
+    [0, 1].forEach(v => { ctx.beginPath(); ctx.moveTo(X(0), Y(v)); ctx.lineTo(X(1), Y(v)); ctx.stroke(); });
+    ctx.beginPath(); ctx.moveTo(X(0), Y(0)); ctx.lineTo(X(1), Y(1)); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle = tok("--ink-soft"); ctx.font = "11px 'IBM Plex Mono', monospace";
+    ctx.fillText("0", 14, Y(0) + 4); ctx.fillText("1", 14, Y(1) + 4);
+    ctx.fillText("time →", w - p.r - 46, h - 7); ctx.save(); ctx.translate(11, p.t + 52); ctx.rotate(-Math.PI / 2); ctx.fillText("value →", 0, 0); ctx.restore();
+    ctx.strokeStyle = tok("--moss"); ctx.lineWidth = 2.5; ctx.beginPath();
+    for (let i = 0; i <= 300; i++) { const u = i / 300; i ? ctx.lineTo(X(u), Y(fn(u))) : ctx.moveTo(X(u), Y(fn(u))); }
+    ctx.stroke();
+    ctx.fillStyle = tok("--brass"); ctx.beginPath(); ctx.arc(X(t), Y(fn(t)), 6, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = tok("--brass"); ctx.lineWidth = 1; ctx.setLineDash([2, 3]);
+    ctx.beginPath(); ctx.moveTo(X(t), h - p.b); ctx.lineTo(X(t), Y(fn(t))); ctx.lineTo(p.l, Y(fn(t))); ctx.stroke(); ctx.setLineDash([]);
+  }
+  function drawLanes() {
+    const { ctx, w, h } = fitCanvas(lanes);
+    const [lo, hi] = range(), pad = 22, r = 9;
+    const X = v => pad + ((v - lo) / (hi - lo)) * (w - pad * 2);
+    const laneY = [h * 0.3, h * 0.74];
+    const labels = [name(), "none (linear)"], fns = [fn, u => u];
+    ctx.font = "11px 'IBM Plex Mono', monospace";
+    laneY.forEach((y, li) => {
+      ctx.fillStyle = tok("--ink-soft"); ctx.fillText(labels[li] + "  ·  13 frames, equal time apart", pad - 4, y - 26);
+      ctx.strokeStyle = tok("--rule"); ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(X(0), y); ctx.lineTo(X(1), y); ctx.stroke();
+      [0, 1].forEach(v => { ctx.beginPath(); ctx.moveTo(X(v), y - 14); ctx.lineTo(X(v), y + 14); ctx.stroke(); });
+      for (let i = 0; i <= 12; i++) {
+        const v = fns[li](i / 12);
+        ctx.globalAlpha = 0.18 + 0.32 * (i / 12);
+        ctx.fillStyle = tok("--moss"); ctx.beginPath(); ctx.arc(X(v), y, r - 2, 0, Math.PI * 2); ctx.fill();
+        ctx.globalAlpha = 1; ctx.fillStyle = tok("--ink-soft"); ctx.font = "9px 'IBM Plex Mono', monospace";
+        if (i % 3 === 0) ctx.fillText(String(i), X(v) - 3, y + 26);
+      }
+      ctx.font = "11px 'IBM Plex Mono', monospace";
+      ctx.fillStyle = tok("--brass"); ctx.beginPath(); ctx.arc(X(fns[li](t)), y, r, 0, Math.PI * 2); ctx.fill();
+    });
+  }
+  const drawAll = () => { drawCurve(); drawLanes(); };
+  function update() {
+    fn = gsap.parseEase(name());
+    type.disabled = fam.value === "none" || fam.value === "steps";
+    $("#t2-name").textContent = name();
+    drawAll();
+  }
+  function play() {
+    if (anim) anim.kill();
+    t = 0; anim = gsap.to({ v: 0 }, { v: 1, duration: +dur.value, ease: "none", onUpdate() { t = this.targets()[0].v; drawAll(); } });
+  }
+  [fam, type].forEach(s => s.addEventListener("change", () => { update(); play(); }));
+  dur.addEventListener("input", () => { $("#t2-dur-out").textContent = (+dur.value).toFixed(1) + "s"; });
+  $("#t2-play").addEventListener("click", play);
+  update();
+  new ResizeObserver(drawAll).observe(curve);
+  themeHooks.push(drawAll);
+})();
+
+/* ======================= 03 TIMELINE LAB ======================= */
+(function timelineLab() {
+  const card = $("#t3-card"), title = $("#t3-title"), latin = $("#t3-latin"), rule = $("#t3-rule"), tags = $$(".t3-tag"), seal = $("#t3-seal");
+  const ov = $("#t3-ov"), scrub = $("#t3-scrub"), code = $("#t3-code");
+  let tl, ctx;
+  const gantt = makeGantt($("#t3-gantt"), () => tl);
+  function build(atEnd) {
+    if (ctx) ctx.revert();
+    const o = +ov.value, pos = o ? `"-=${o}"` : "";
+    ctx = gsap.context(() => {
+      tl = gsap.timeline({ paused: true, defaults: { ease: "power3.out", duration: 0.6 }, onUpdate: sync });
+      tl.from(card, { autoAlpha: 0, scale: 0.94, y: 18, duration: 0.7, data: "card" })
+        .from([title, latin], { autoAlpha: 0, y: 22, stagger: 0.1, data: "title + latin" }, `-=${o}`)
+        .from(rule, { scaleX: 0, transformOrigin: "left center", duration: 0.5, data: "rule" }, `-=${o}`)
+        .from(tags, { autoAlpha: 0, y: 12, stagger: 0.08, duration: 0.4, data: "tags" }, `-=${o}`)
+        .from(seal, { autoAlpha: 0, rotation: -90, scale: 0.4, ease: "back.out(2)", duration: 0.7, data: "seal" }, "<0.15");
+    });
+    tl.progress(atEnd ? 1 : 0);
+    gantt.build();
+    sync();
+    const p = s => (s ? `, ${s}` : "");
+    setCode(code,
+`const tl = gsap.timeline({ defaults: { ease: "power3.out", duration: 0.6 } });
+tl.from(".card",   { autoAlpha: 0, scale: 0.94, y: 18, duration: 0.7 })
+  .from(".title",  { autoAlpha: 0, y: 22, stagger: 0.1 }${p(pos)})
+  .from(".rule",   { scaleX: 0, transformOrigin: "left center", duration: 0.5 }${p(pos)})
+  .from(".tag",    { autoAlpha: 0, y: 12, stagger: 0.08, duration: 0.4 }${p(pos)})
+  .from(".seal",   { autoAlpha: 0, rotation: -90, scale: 0.4, ease: "back.out(2)", duration: 0.7 }, "<0.15");
+// total: ${tl.duration().toFixed(2)}s${o ? "" : "  (no overlap: each tween waits for the last)"}`);
+  }
+  function sync() { scrub.value = Math.round(tl.progress() * 1000); gantt.update(); }
+  ov.addEventListener("input", () => { $("#t3-ov-out").textContent = (+ov.value).toFixed(2) + "s"; build(true); });
+  scrub.addEventListener("input", () => { tl.pause(); tl.progress(scrub.value / 1000); });
+  $("#t3-play").addEventListener("click", () => tl.restart());
+  $("#t3-rev").addEventListener("click", () => { if (tl.progress() === 0) tl.progress(1); tl.reverse(); });
+  build(true);
+})();
+
+/* ======================= 04 STAGGER LAB ======================= */
+(function staggerLab() {
+  const wrap = $("#t4-dots");
+  const narrow = window.matchMedia("(max-width: 700px)").matches;
+  const cols = narrow ? 10 : 14, rows = 8;
+  for (let i = 0; i < cols * rows; i++) { const d = document.createElement("i"); d.dataset.i = i; wrap.appendChild(d); }
+  const dots = $$("i", wrap);
+  let origin = Math.floor(rows / 2) * cols + Math.floor(cols / 3), anim;
+  dots[origin].classList.add("origin");
+  const from = $("#t4-from"), grid = $("#t4-grid"), axis = $("#t4-axis"), amount = $("#t4-amount"), sease = $("#t4-sease");
+  function cfg() {
+    const s = { amount: +amount.value, from: from.value === "index" ? origin : from.value };
+    if (grid.checked) s.grid = [rows, cols];
+    if (grid.checked && axis.value) s.axis = axis.value;
+    if (sease.value !== "none") s.ease = sease.value;
+    return s;
+  }
+  function show() {
+    const s = cfg();
+    const parts = [`amount: ${s.amount}`, `from: ${typeof s.from === "number" ? s.from : '"' + s.from + '"'}`];
+    if (s.grid) parts.push(`grid: [${rows}, ${cols}]`);
+    if (s.axis) parts.push(`axis: "${s.axis}"`);
+    if (s.ease) parts.push(`ease: "${s.ease}"`);
+    setCode($("#t4-code"), `gsap.to(".dot", {\n  scale: 1.9, y: -6, duration: 0.35,\n  ease: "power2.inOut", yoyo: true, repeat: 1,\n  stagger: { ${parts.join(", ")} }\n});`);
+  }
+  function play() {
+    if (anim) { anim.kill(); gsap.set(dots, { scale: 1, y: 0 }); }
+    show();
+    anim = gsap.to(dots, { scale: 1.9, y: -6, duration: 0.35, ease: "power2.inOut", yoyo: true, repeat: 1, stagger: cfg() });
+  }
+  wrap.addEventListener("click", e => {
+    const d = e.target.closest("i"); if (!d) return;
+    dots[origin].classList.remove("origin"); origin = +d.dataset.i; d.classList.add("origin");
+    from.value = "index"; play();
+  });
+  [from, grid, axis, sease].forEach(c => c.addEventListener("change", play));
+  amount.addEventListener("input", () => { $("#t4-amount-out").textContent = (+amount.value).toFixed(1) + "s"; show(); });
+  amount.addEventListener("change", play);
+  $("#t4-play").addEventListener("click", play);
+  show();
+})();
+
+/* ======================= 05 POINTER LAB ======================= */
+(function pointerLab() {
+  const pad = $("#t5-pad"), dot = $("#t5-dot"), ring = $("#t5-ring"), lag = $("#t5-lag"), pull = $("#t5-pull");
+  const magpad = $("#t5-magpad"), mag = $("#t5-mag"), label = $("span", mag);
+  gsap.set([dot, ring], { x: 120, y: 120 });
+  const dx = gsap.quickTo(dot, "x", { duration: 0.1, ease: "power3" }), dy = gsap.quickTo(dot, "y", { duration: 0.1, ease: "power3" });
+  let rx, ry;
+  const makeRing = () => { rx = gsap.quickTo(ring, "x", { duration: +lag.value, ease: "power3" }); ry = gsap.quickTo(ring, "y", { duration: +lag.value, ease: "power3" }); };
+  makeRing();
+  pad.addEventListener("pointermove", e => {
+    const r = pad.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top;
+    dx(x); dy(y); rx(x); ry(y);
+  });
+  magpad.addEventListener("pointermove", e => {
+    const r = mag.getBoundingClientRect();
+    const ox = e.clientX - (r.left + r.width / 2), oy = e.clientY - (r.top + r.height / 2);
+    const k = +pull.value;
+    gsap.to(mag, { x: ox * k, y: oy * k, duration: 0.5, ease: "power3.out", overwrite: "auto" });
+    gsap.to(label, { x: ox * k * 0.45, y: oy * k * 0.45, duration: 0.5, ease: "power3.out", overwrite: "auto" });
+  });
+  magpad.addEventListener("pointerleave", () => {
+    gsap.to([mag, label], { x: 0, y: 0, duration: 1.1, ease: "elastic.out(1, 0.35)", overwrite: "auto" });
+  });
+  function show() {
+    setCode($("#t5-code"),
+`// follower: one reusable tween per property, retargeted on every move
+const ringX = gsap.quickTo(".ring", "x", { duration: ${(+lag.value).toFixed(2)}, ease: "power3" });
+const ringY = gsap.quickTo(".ring", "y", { duration: ${(+lag.value).toFixed(2)}, ease: "power3" });
+pad.addEventListener("pointermove", e => { ringX(e.offsetX); ringY(e.offsetY); });
+
+// magnet: lean toward the pointer, spring back on leave
+wrap.addEventListener("pointermove", e => {
+  gsap.to(btn,   { x: dx * ${pull.value}, y: dy * ${pull.value}, duration: 0.5, overwrite: "auto" });
+  gsap.to(label, { x: dx * ${(pull.value * 0.45).toFixed(2)}, y: dy * ${(pull.value * 0.45).toFixed(2)}, duration: 0.5, overwrite: "auto" });
+});
+wrap.addEventListener("pointerleave", () =>
+  gsap.to([btn, label], { x: 0, y: 0, duration: 1.1, ease: "elastic.out(1, 0.35)" }));`);
+  }
+  lag.addEventListener("input", () => { $("#t5-lag-out").textContent = (+lag.value).toFixed(2) + "s"; makeRing(); show(); });
+  pull.addEventListener("input", () => { $("#t5-pull-out").textContent = (+pull.value).toFixed(2); show(); });
+  show();
+})();
+
+/* ======================= 06 SVG DRAW LAB ======================= */
+(function drawLab() {
+  const paths = $$("#t6-svg path"), stem = $("#t6-stem"), slider = $("#t6-p");
+  const lens = paths.map(p => p.getTotalLength());
+  const state = paths.map(() => ({ p: 1 }));
+  function apply() {
+    paths.forEach((p, i) => { p.style.strokeDasharray = lens[i]; p.style.strokeDashoffset = lens[i] * (1 - state[i].p); });
+    $("#t6-len").textContent = lens[0].toFixed(1);
+    $("#t6-da").textContent = lens[0].toFixed(1);
+    $("#t6-do").textContent = (lens[0] * (1 - state[0].p)).toFixed(1);
+  }
+  slider.addEventListener("input", () => {
+    gsap.killTweensOf(state);
+    const v = +slider.value;
+    state.forEach(s => { s.p = v; });
+    $("#t6-p-out").textContent = Math.round(v * 100) + "%"; apply();
+  });
+  $("#t6-play").addEventListener("click", () => {
+    gsap.killTweensOf(state);
+    state.forEach(s => { s.p = 0; }); apply();
+    gsap.to(state, { p: 1, duration: 1.4, ease: "power2.inOut", stagger: { each: 0.18 },
+      onUpdate() { slider.value = state[0].p; $("#t6-p-out").textContent = Math.round(state[0].p * 100) + "%"; apply(); } });
+  });
+  apply();
+})();
+
+/* ======================= 07 SCROLL LAB ======================= */
+(function scrollLab() {
+  const scroller = $("#t7-scroller"), trig = $("#t7-trigger"), card = $("#t7-card"), bar = $("#t7-bar"), stem = $("#t7-stem");
+  const sScrub = $("#t7-scrub"), sStart = $("#t7-start"), sEnd = $("#t7-end"), pin = $("#t7-pin");
+  let ctx;
+  function build() {
+    if (ctx) ctx.revert();
+    const sv = sScrub.value, scrub = sv === "false" ? false : sv === "true" ? true : +sv;
+    ctx = gsap.context(() => {
+      const anim = gsap.timeline({ paused: true })
+        .fromTo(bar, { scaleX: 0 }, { scaleX: 1, ease: "none", duration: 1 })
+        .fromTo(stem, { scaleY: 0.05 }, { scaleY: 1, ease: scrub === false ? "back.out(1.6)" : "none", duration: 1 }, 0)
+        .fromTo(card, { rotation: -4 }, { rotation: 0, ease: "none", duration: 1 }, 0);
+      if (scrub === false) anim.duration(0.9);
+      ScrollTrigger.create({
+        trigger: trig, scroller, start: sStart.value, end: sEnd.value, scrub,
+        pin: pin.checked ? card : false,
+        animation: anim,
+        toggleActions: scrub === false ? "play reverse play reverse" : undefined,
+        markers: { startColor: tok("--moss"), endColor: tok("--brass"), fontSize: "11px", indent: 6 },
+        onUpdate: self => { $("#t7-prog").textContent = self.progress.toFixed(3); $("#t7-dir").textContent = self.direction > 0 ? "down" : "up"; },
+        onToggle: self => { $("#t7-act").textContent = self.isActive ? "yes" : "no"; }
+      });
+    }, scroller);
+    const scrubTxt = sv === "false" ? "false" : sv;
+    setCode($("#t7-code"),
+`gsap.timeline({
+  scrollTrigger: {
+    trigger: ".trig",
+    start: "${sStart.value}",       // [trigger point] [viewport point]
+    end: "${sEnd.value}",
+    scrub: ${scrubTxt},${scrub === false ? `\n    toggleActions: "play reverse play reverse",` : ""}${pin.checked ? `\n    pin: ".st-card",` : ""}
+    markers: true             // dev only
+  }
+})
+.fromTo(".st-bar i", { scaleX: 0 },    { scaleX: 1, ease: "none" })
+.fromTo(".st-stem",  { scaleY: 0.05 }, { scaleY: 1, ease: "none" }, 0);`);
+  }
+  [sScrub, sStart, sEnd, pin].forEach(c => c.addEventListener("change", build));
+  build();
+  window.addEventListener("load", () => ScrollTrigger.refresh());
+  if (document.fonts) document.fonts.ready.then(() => ScrollTrigger.refresh());
+})();
+
+/* ======================= THREE.JS SHARED ======================= */
+const hasThree = !!window.THREE;
+if (hasThree && THREE.ColorManagement && "legacyMode" in THREE.ColorManagement) THREE.ColorManagement.legacyMode = false;
+
+function makeStage(host, fov = 35) {
+  if (!hasThree) { host.insertAdjacentHTML("beforeend", '<div class="fallback">The 3D library did not load. Reload the page to try again.</div>'); return null; }
+  let renderer;
+  try { renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true }); }
+  catch (e) { host.insertAdjacentHTML("beforeend", '<div class="fallback">This browser could not start WebGL, so the 3D bench is unavailable. On a real site, this is where a poster image or video goes.</div>'); return null; }
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  renderer.outputEncoding = THREE.sRGBEncoding;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  host.prepend(renderer.domElement);
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(fov, 16 / 9, 0.1, 100);
+  let visible = false;
+  const hooks = [];
+  function resize() {
+    const w = host.clientWidth, h = host.clientHeight; if (!w || !h) return;
+    renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix();
+  }
+  new ResizeObserver(resize).observe(host); resize();
+  new IntersectionObserver(([e]) => { visible = e.isIntersecting; }, { rootMargin: "100px" }).observe(host);
+  const stage = { renderer, scene, camera, onFrame: f => hooks.push(f), renderOnce: () => { hooks.forEach(f => f(0, 16)); renderer.render(scene, camera); } };
+  gsap.ticker.add((time, delta) => { if (!visible) return; hooks.forEach(f => f(time, delta)); renderer.render(scene, camera); });
+  return stage;
+}
+
+function attachOrbit(el, rig, minEl = 0.05, maxEl = 1.3) {
+  let down = null;
+  el.addEventListener("pointerdown", e => { down = { x: e.clientX, y: e.clientY, az: rig.az, el: rig.el }; el.setPointerCapture(e.pointerId); });
+  el.addEventListener("pointermove", e => {
+    if (!down) return;
+    rig.az = down.az - (e.clientX - down.x) * 0.008;
+    rig.el = Math.min(maxEl, Math.max(minEl, down.el + (e.clientY - down.y) * 0.006));
+  });
+  const up = () => { down = null; };
+  el.addEventListener("pointerup", up); el.addEventListener("pointercancel", up);
+}
+
+function stillLife(scene) {
+  const meshes = [];
+  const add = (geo, color, rough, pos, rotY = 0) => {
+    const m = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ color, roughness: rough, metalness: 0 }));
+    m.position.set(...pos); m.rotation.y = rotY; m.castShadow = true; m.receiveShadow = true; scene.add(m); meshes.push(m); return m;
+  };
+  const plinth = add(new THREE.CylinderGeometry(2.6, 2.7, 0.3, 64), 0xcbbfa5, 0.92, [0, -0.15, 0]);
+  plinth.castShadow = false;
+  const sphere = add(new THREE.SphereGeometry(0.7, 64, 32), 0x6f7f4a, 0.45, [-1.05, 0.7, 0.35]);
+  const box = add(new THREE.BoxGeometry(1.1, 1.1, 1.1), 0x8a5a3b, 0.7, [0.55, 0.55, -0.55], 0.6);
+  const cyl = add(new THREE.CylinderGeometry(0.34, 0.34, 1.8, 48), 0xd8cdb5, 0.55, [1.2, 0.9, 0.8]);
+  const catcher = new THREE.Mesh(new THREE.PlaneGeometry(30, 30), new THREE.ShadowMaterial({ opacity: 0.18 }));
+  catcher.rotation.x = -Math.PI / 2; catcher.position.y = -0.3; catcher.receiveShadow = true; scene.add(catcher);
+  return { meshes, plinth, sphere, box, cyl };
+}
+
+function shadowLight(color, intensity) {
+  const l = new THREE.DirectionalLight(color, intensity);
+  l.castShadow = true;
+  l.shadow.mapSize.set(1024, 1024);
+  Object.assign(l.shadow.camera, { left: -4, right: 4, top: 4, bottom: -4, near: 0.5, far: 30 });
+  l.shadow.bias = -0.0004; l.shadow.normalBias = 0.02;
+  return l;
+}
+
+/* ======================= 08 SCENE LAB ======================= */
+(function sceneLab() {
+  const host = $("#t8-stage"), st = makeStage(host, 35); if (!st) return;
+  const { scene, camera } = st;
+  const sl = stillLife(scene);
+  scene.add(new THREE.HemisphereLight(0xfff4e0, 0x5a4a3a, 0.5));
+  const key = shadowLight(0xfff3e2, 1.5); key.position.set(4, 7, 5); scene.add(key);
+  const axes = new THREE.AxesHelper(3.2), grid = new THREE.GridHelper(8, 16, 0x8a7a66, 0xb8ab94);
+  axes.position.y = 0.01; grid.position.y = 0.005; axes.visible = grid.visible = false; scene.add(axes, grid);
+  const rig = { az: 0.75, el: 0.36 };
+  attachOrbit(host, rig);
+  const fov = $("#t8-fov"), dolly = $("#t8-dolly");
+  let tris = 0;
+  sl.meshes.forEach(m => { const g = m.geometry; tris += g.index ? g.index.count / 3 : g.attributes.position.count / 3; });
+  $("#t8-tris").textContent = Math.round(tris).toLocaleString();
+  const FRAME_H = 3.6;
+  function dist() { return dolly.checked ? (FRAME_H / 2) / Math.tan(THREE.MathUtils.degToRad(camera.fov) / 2) : 8.2; }
+  st.onFrame(() => {
+    const r = dist();
+    camera.position.set(Math.sin(rig.az) * Math.cos(rig.el) * r, Math.sin(rig.el) * r + 0.7, Math.cos(rig.az) * Math.cos(rig.el) * r);
+    camera.lookAt(0, 0.7, 0);
+  });
+  function apply() {
+    camera.fov = +fov.value; camera.updateProjectionMatrix();
+    $("#t8-fov-out").textContent = fov.value + "°";
+    $("#t8-focal").textContent = camera.getFocalLength().toFixed(0);
+    $("#t8-dist").textContent = dist().toFixed(2);
+  }
+  fov.addEventListener("input", apply); dolly.addEventListener("change", apply);
+  $("#t8-wire").addEventListener("change", e => sl.meshes.forEach(m => { m.material.wireframe = e.target.checked; }));
+  $("#t8-help").addEventListener("change", e => { axes.visible = grid.visible = e.target.checked; });
+  apply();
+})();
+
+/* ======================= 09 LIGHT LAB ======================= */
+(function lightLab() {
+  const host = $("#t9-stage"), st = makeStage(host, 30); if (!st) return;
+  const { scene, camera, renderer } = st;
+  const sl = stillLife(scene);
+  const key = shadowLight(0xfff3e2, 1.6); scene.add(key, key.target);
+  const fill = new THREE.HemisphereLight(0xe8eef5, 0x4a3b2c, 0.45); scene.add(fill);
+  const rim = new THREE.DirectionalLight(0xffffff, 1.2); scene.add(rim);
+  const marker = new THREE.Mesh(new THREE.SphereGeometry(0.12, 16, 12), new THREE.MeshBasicMaterial({ color: 0xffd27a }));
+  scene.add(marker);
+  const rig = { az: 0.4, el: 0.3 };
+  attachOrbit(host, rig);
+  const ids = ["az", "el", "key", "fill", "rim", "rough", "metal", "exp"];
+  const c = Object.fromEntries(ids.map(i => [i, $("#t9-" + i)]));
+  const fmt = { az: v => v + "°", el: v => v + "°" };
+  function apply() {
+    ids.forEach(i => { $("#t9-" + i + "-out").textContent = fmt[i] ? fmt[i](c[i].value) : (+c[i].value).toFixed(2); });
+    const az = THREE.MathUtils.degToRad(+c.az.value), el = THREE.MathUtils.degToRad(+c.el.value), R = 7;
+    key.position.set(Math.sin(az) * Math.cos(el) * R, Math.sin(el) * R, Math.cos(az) * Math.cos(el) * R);
+    marker.position.copy(key.position).multiplyScalar(0.62);
+    key.intensity = +c.key.value; fill.intensity = +c.fill.value; rim.intensity = +c.rim.value;
+    sl.sphere.material.roughness = +c.rough.value; sl.sphere.material.metalness = +c.metal.value;
+    renderer.toneMappingExposure = +c.exp.value;
+  }
+  ids.forEach(i => c[i].addEventListener("input", apply));
+  $("#t9-temp").addEventListener("change", e => key.color.set("#" + e.target.value));
+  key.color.set("#" + $("#t9-temp").value);
+  const allMats = () => { const out = []; scene.traverse(o => { if (o.material) out.push(o.material); }); return out; };
+  $("#t9-shadow").addEventListener("change", e => { renderer.shadowMap.enabled = e.target.checked; key.castShadow = e.target.checked; allMats().forEach(m => { m.needsUpdate = true; }); });
+  $("#t9-tone").addEventListener("change", e => { renderer.toneMapping = e.target.value === "aces" ? THREE.ACESFilmicToneMapping : THREE.NoToneMapping; allMats().forEach(m => { m.needsUpdate = true; }); });
+  st.onFrame(() => {
+    const r = 9.5;
+    camera.position.set(Math.sin(rig.az) * Math.cos(rig.el) * r, Math.sin(rig.el) * r + 0.7, Math.cos(rig.az) * Math.cos(rig.el) * r);
+    camera.lookAt(0, 0.6, 0);
+    // rim stays behind the subject relative to the camera
+    rim.position.set(-camera.position.x * 0.8, 4.5, -camera.position.z * 0.8);
+  });
+  apply();
+})();
+
+/* ======================= 11 DIRECTOR LAB ======================= */
+(function directorLab() {
+  const host = $("#t11-stage"), st = makeStage(host, 30); if (!st) return;
+  const { scene, camera } = st;
+  const plinth = new THREE.Mesh(new THREE.BoxGeometry(7.2, 0.3, 2.2), new THREE.MeshStandardMaterial({ color: 0xcbbfa5, roughness: 0.9 }));
+  plinth.position.y = -0.15; plinth.receiveShadow = true; scene.add(plinth);
+  const catcher = new THREE.Mesh(new THREE.PlaneGeometry(40, 40), new THREE.ShadowMaterial({ opacity: 0.18 }));
+  catcher.rotation.x = -Math.PI / 2; catcher.position.y = -0.3; catcher.receiveShadow = true; scene.add(catcher);
+  const slabs = [];
+  const base = new THREE.Color(0xd8ccb2), brass = new THREE.Color(0xc08a35);
+  for (let i = 0; i < 5; i++) {
+    const m = new THREE.Mesh(new THREE.BoxGeometry(0.9, 1.8, 0.18), new THREE.MeshStandardMaterial({ color: base.clone(), roughness: 0.55 }));
+    m.position.set((i - 2) * 1.2, 0.9, 0); m.castShadow = true; m.receiveShadow = true; scene.add(m); slabs.push(m);
+  }
+  const center = slabs[2];
+  scene.add(new THREE.HemisphereLight(0xf2ece0, 0x4a3b2c, 0.45));
+  const key = shadowLight(0xfff0dc, 2.4); key.position.set(4, 7, 6);
+  Object.assign(key.shadow.camera, { left: -5, right: 5, top: 5, bottom: -5 }); scene.add(key);
+  const rim = new THREE.DirectionalLight(0xffe2b0, 3); rim.position.set(-3, 4, -6); scene.add(rim);
+
+  const rig = { angle: 0.35, radius: 7.5, height: 2.2, px: 0, py: 0 };
+  st.onFrame(() => {
+    camera.position.set(Math.sin(rig.angle) * rig.radius + rig.px, rig.height + rig.py, Math.cos(rig.angle) * rig.radius);
+    camera.lookAt(0, 0.9, 0);
+  });
+  const pxTo = gsap.quickTo(rig, "px", { duration: 1.2, ease: "power3" }), pyTo = gsap.quickTo(rig, "py", { duration: 1.2, ease: "power3" });
+  host.addEventListener("pointermove", e => {
+    const r = host.getBoundingClientRect();
+    pxTo(((e.clientX - r.left) / r.width - 0.5) * 1.4);
+    pyTo(-((e.clientY - r.top) / r.height - 0.5) * 0.8);
+  });
+  host.addEventListener("pointerleave", () => { pxTo(0); pyTo(0); });
+
+  const camSel = $("#t11-cam"), fromSel = $("#t11-from"), scrub = $("#t11-scrub");
+  let tl;
+  const gantt = makeGantt($("#t11-gantt"), () => tl);
+  function build() {
+    const p = tl ? tl.progress() : 1;
+    if (tl) tl.kill();
+    const sf = { each: 0.12, from: fromSel.value };
+    tl = gsap.timeline({ paused: true, onUpdate: sync });
+    tl.fromTo(rig, { angle: -1.1, radius: 11, height: 4.2 }, { angle: 0.35, radius: 7.5, height: 2.2, duration: 3.2, ease: camSel.value, data: "camera rig" }, 0)
+      .fromTo(key, { intensity: 0 }, { intensity: 1.8, duration: 1.6, ease: "sine.inOut", data: "key light" }, 0.2)
+      .fromTo(slabs.map(s => s.position), { y: -1.2 }, { y: 0.9, duration: 1.1, ease: "back.out(1.3)", stagger: sf, data: "slabs rise" }, 0.5)
+      .fromTo(slabs.map(s => s.rotation), { y: -Math.PI / 2 }, { y: 0, duration: 1.2, ease: "power3.inOut", stagger: sf, data: "slabs turn" }, "<0.35")
+      .addLabel("accent")
+      .fromTo(rim, { intensity: 0 }, { intensity: 2.2, duration: 1, ease: "power2.out", data: "rim light" }, "accent-=0.6")
+      .fromTo(center.material.color, { r: base.r, g: base.g, b: base.b }, { r: brass.r, g: brass.g, b: brass.b, duration: 0.8, ease: "power2.inOut", data: "accent color" }, "accent-=0.2");
+    tl.progress(p);
+    gantt.build(); sync();
+  }
+  function sync() { scrub.value = Math.round(tl.progress() * 1000); gantt.update(); }
+  [camSel, fromSel].forEach(s => s.addEventListener("change", () => { build(); tl.restart(); }));
+  scrub.addEventListener("input", () => { tl.pause(); tl.progress(scrub.value / 1000); });
+  $("#t11-play").addEventListener("click", () => tl.restart());
+  $("#t11-rev").addEventListener("click", () => { if (tl.progress() === 0) tl.progress(1); tl.reverse(); });
+  build();
+  // play the reveal once when the bench first comes into view, unless the reader prefers reduced motion
+  if (!reduceMotion) {
+    const once = new IntersectionObserver(([e]) => { if (e.isIntersecting) { tl.restart(); once.disconnect(); } }, { threshold: 0.6 });
+    once.observe(host);
+  }
+})();
+
+})();
+</script>
+
+</html>

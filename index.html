@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kerning the Chaos</title>
+<meta name="description" content="A working studio of field guides, reusable skills, notes and studies on web craft: motion, type, 3D and the tools in between.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,500;1,6..96,500&family=JetBrains+Mono:wght@400;500&family=Newsreader:ital,opsz,wght@0,6..72,400;1,6..72,400&display=swap">
+<style>
+/* A studio wall: four rooms, each named for something found in a print shop or atelier. */
+:root {
+  --paper: #EDE7DA; --ink: #221E19; --soft: #685D50; --rule: #CFC5B2; --cork: #A4612A; --moss: #47603A;
+  --display: "Bodoni Moda", Didot, Georgia, serif; --body: "Newsreader", Georgia, serif; --mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --paper: #1C1814; --ink: #ECE4D4; --soft: #A99C89; --rule: #3E352B; --cork: #DC9555; --moss: #9FB57F; color-scheme: dark; }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--paper); color: var(--ink); font: 19px/1.6 var(--body);
+  padding: max(40px, env(safe-area-inset-top, 0px)) max(20px, env(safe-area-inset-right, 0px)) 80px max(20px, env(safe-area-inset-left, 0px)); }
+main { max-width: 980px; margin: 0 auto; }
+a { color: inherit; }
+.eyebrow { font: 12px var(--mono); letter-spacing: .16em; text-transform: uppercase; color: var(--soft); }
+h1 { font: 500 clamp(52px, 11vw, 132px)/.92 var(--display); letter-spacing: -.01em; margin: 14px 0 22px; text-wrap: balance; }
+h1 .k { letter-spacing: .12em; transition: letter-spacing .9s cubic-bezier(.19,1,.22,1); }
+h1:hover .k { letter-spacing: -.02em; }
+h1 em { color: var(--cork); }
+.lede { font-size: 22px; max-width: 34em; margin: 0 0 48px; }
+.rooms { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 48px; border-top: 2px solid var(--ink); }
+.room { padding: 22px 0 30px; border-bottom: 1px solid var(--rule); min-width: 0; }
+.room header { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 6px; }
+.room h2 { font: 500 34px/1.1 var(--display); margin: 0; }
+.room .folder { font: 11px var(--mono); color: var(--soft); letter-spacing: .08em; }
+.room > p { margin: 0 0 14px; color: var(--soft); font-size: 17px; }
+.room ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.room li a { text-decoration: none; display: block; }
+.room li a b { font-weight: 400; font-family: var(--display); font-size: 21px; display: block; }
+.room li a:hover b { color: var(--cork); }
+.room li a span { font-size: 15.5px; color: var(--soft); }
+.empty { font: 13px var(--mono); color: var(--soft); }
+footer { margin-top: 48px; font: 12px var(--mono); color: var(--soft); }
+@media (max-width: 720px) { .rooms { grid-template-columns: minmax(0, 1fr); } }
+@media (prefers-reduced-motion: reduce) { h1 .k { transition: none; } }
+</style>
+</head>
+<body>
+<main>
+  <div class="eyebrow">A working studio · motion, type, 3D</div>
+  <h1><span class="k">Kerning</span> the <em>Chaos</em></h1>
+  <p class="lede">Field guides, reusable tools, notes and practice pieces, set in order one careful adjustment at a time.</p>
+
+  <div class="rooms">
+    <section class="room">
+      <header><h2>Specimens</h2><span class="folder">/guides</span></header>
+      <p>Interactive field guides with live demos to take apart.</p>
+      <ul>
+        <li><a href="guides/motion-and-matter.html"><b>Motion &amp; Matter</b><span>GSAP from the ground up, Three.js scenes and lighting, and GSAP directing a 3D reveal.</span></a></li>
+        <li><a href="guides/anatomy-of-a-reveal.html"><b>Anatomy of a Reveal</b><span>Scroll-driven text and section reveals, deconstructed from three reference sites.</span></a></li>
+      </ul>
+    </section>
+    <section class="room">
+      <header><h2>Sorts</h2><span class="folder">/skills</span></header>
+      <p>Reusable Claude skills, the pieces pulled from the case when needed.</p>
+      <ul>
+        <li><a href="https://github.com/ryentzer/kerning-the-chaos/tree/main/skills/level-up-guide"><b>Level-Up Guide</b><span>Builds a mastery-depth interactive guide on any topic, with live demos and a practice plan.</span></a></li>
+      </ul>
+    </section>
+    <section class="room">
+      <header><h2>Proofs</h2><span class="folder">/notes</span></header>
+      <p>Distilled write-ups of conversations worth keeping.</p>
+      <ul>
+        <li><a href="https://github.com/ryentzer/kerning-the-chaos/blob/main/notes/2026-10-17-deconstructing-reveal-sites.md"><b>Deconstructing three reveal sites</b><span>How Oryzo, Design is Funny and the Anime.js site bring text into view, read from their code.</span></a></li>
+        <li><a href="https://github.com/ryentzer/kerning-the-chaos/blob/main/notes/2026-10-18-electronic-materials-office.md"><b>The quiet school</b><span>Electronic Materials Office: one reveal system, tactile press states, and a fallback switch.</span></a></li>
+      </ul>
+    </section>
+    <section class="room">
+      <header><h2>Studies</h2><span class="folder">/studies</span></header>
+      <p>Small pieces made to learn one thing, from the guides' practice plans.</p>
+      <p class="empty">The first study goes here.</p>
+    </section>
+  </div>
+
+  <footer>Kerning the Chaos · source on <a href="https://github.com/ryentzer/kerning-the-chaos">GitHub</a></footer>
+</main>
+</body>
+</html>

@@ -1,0 +1,1268 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px/1.4 system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Anatomy of a Reveal</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=Bodoni+Moda:ital,opsz,wght@0,6..96,500;1,6..96,500&family=JetBrains+Mono:wght@400;500&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&display=swap">
+<style>
+/* Layout: a type specimen workbook. Sticky chapter index, ~68ch reading column, benches a little wider; demo type is set in a heavy grotesk so motion reads clearly. */
+:root {
+  --paper: #EDE7DA;     /* bone */
+  --bench: #E3DBCB;
+  --ink: #221E19;
+  --ink-soft: #685D50;
+  --moss: #47603A;
+  --cork: #A4612A;      /* the one accent */
+  --rule: #CFC5B2;
+  --code-bg: #E7E0D1;
+  --font-display: "Bodoni Moda", "Didot", "Bodoni 72", Georgia, serif;
+  --font-body: "Newsreader", "Iowan Old Style", Georgia, serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --font-demo: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --measure: 68ch;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #1C1814; --bench: #27211B; --ink: #ECE4D4; --ink-soft: #A99C89;
+    --moss: #9FB57F; --cork: #DC9555; --rule: #3E352B; --code-bg: #221D18; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #1C1814; --bench: #27211B; --ink: #ECE4D4; --ink-soft: #A99C89;
+  --moss: #9FB57F; --cork: #DC9555; --rule: #3E352B; --code-bg: #221D18; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--paper); color: var(--ink);
+  font-family: var(--font-body); font-size: 19px; line-height: 1.6;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  -webkit-font-smoothing: antialiased;
+}
+a { color: var(--moss); text-underline-offset: 3px; }
+a:hover { color: var(--cork); }
+:focus-visible { outline: 2px solid var(--cork); outline-offset: 2px; }
+.shell { max-width: 1240px; margin: 0 auto; display: grid; grid-template-columns: 230px minmax(0, 1fr); gap: 56px; }
+
+/* index */
+.index { position: sticky; top: env(safe-area-inset-top, 0px); align-self: start; max-height: 100vh; overflow-y: auto; padding-block: 36px 24px; font-family: var(--font-mono); font-size: 12px; }
+.index summary { display: none; }
+.index .brand { font-family: var(--font-display); font-size: 23px; line-height: 1.1; color: var(--ink); text-decoration: none; display: block; margin-bottom: 20px; }
+.index .part { text-transform: uppercase; letter-spacing: .14em; font-size: 10.5px; color: var(--ink-soft); margin: 18px 0 6px; }
+.index ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+.index li a { display: grid; grid-template-columns: 26px 1fr; padding: 3px 6px; border-radius: 3px; color: var(--ink-soft); text-decoration: none; line-height: 1.35; }
+.index li a:hover { color: var(--ink); background: var(--bench); }
+.index li a.active { color: var(--ink); background: var(--bench); box-shadow: inset 2px 0 0 var(--cork); }
+.slowmo { margin-top: 24px; padding-top: 14px; border-top: 1px solid var(--rule); color: var(--ink-soft); line-height: 1.45; }
+.slowmo label { display: flex; gap: 8px; align-items: flex-start; color: var(--ink); cursor: pointer; }
+.slowmo p { margin: 6px 0 0; font-size: 11.5px; }
+
+/* reading column */
+main { min-width: 0; padding-block: 40px 120px; }
+.hero { padding-block: 20px 36px; border-bottom: 1px solid var(--rule); max-width: 920px; }
+.eyebrow { font-family: var(--font-mono); text-transform: uppercase; letter-spacing: .16em; font-size: 11.5px; color: var(--ink-soft); }
+.hero h1 { font-family: var(--font-display); font-weight: 500; font-size: clamp(54px, 9.5vw, 124px); line-height: .95; margin: 12px 0 22px; letter-spacing: -.015em; }
+.hero h1 em { color: var(--cork); }
+.hero .lede { font-size: 22px; line-height: 1.5; max-width: 33em; margin: 0; }
+.hero .how { color: var(--ink-soft); max-width: var(--measure); font-size: 17px; margin-top: 18px; }
+
+.part-head { margin: 84px 0 6px; display: flex; align-items: baseline; gap: 14px; border-top: 2px solid var(--ink); padding-top: 12px; max-width: 920px; flex-wrap: wrap; }
+.part-head .num { font-family: var(--font-mono); font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--cork); }
+.part-head h2 { font-family: var(--font-display); font-weight: 500; font-size: 34px; margin: 0; line-height: 1.1; }
+.part-head p { flex-basis: 100%; margin: 4px 0 0; color: var(--ink-soft); max-width: var(--measure); }
+
+section.ch { margin-top: 62px; scroll-margin-top: 20px; }
+section.ch > h3 { font-family: var(--font-display); font-weight: 500; font-size: clamp(28px, 4vw, 40px); line-height: 1.12; margin: 0 0 18px; text-wrap: balance; max-width: 22em; }
+section.ch > h3 .n { font-family: var(--font-mono); font-size: 14px; color: var(--cork); vertical-align: .55em; margin-right: 10px; }
+section.ch h4 { font-family: var(--font-body); font-weight: 600; font-size: 20px; margin: 32px 0 6px; max-width: var(--measure); }
+p { margin: 0 0 16px; max-width: var(--measure); }
+code { font-family: var(--font-mono); font-size: .8em; background: var(--code-bg); padding: 1px 5px; border-radius: 3px; }
+
+.callout { max-width: var(--measure); border-left: 3px solid var(--moss); padding: 4px 0 4px 18px; margin: 22px 0; }
+.callout.trap { border-left-color: var(--cork); }
+.callout .tag { display: block; font-family: var(--font-mono); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--moss); margin-bottom: 4px; }
+.callout.trap .tag { color: var(--cork); }
+.callout p:last-child { margin-bottom: 0; }
+
+pre.code { font-family: var(--font-mono); font-size: 13px; line-height: 1.6; background: var(--code-bg); border: 1px solid var(--rule); border-radius: 4px; padding: 14px 16px; margin: 18px 0 22px; overflow-x: auto; max-width: 880px; color: var(--ink); }
+pre.code .c { color: var(--ink-soft); font-style: italic; }
+pre.code .s { color: var(--moss); }
+pre.code .k { color: var(--cork); }
+.table-wrap { overflow-x: auto; max-width: 880px; margin: 18px 0 24px; }
+table { border-collapse: collapse; width: 100%; font-size: 16px; line-height: 1.45; }
+th, td { text-align: left; vertical-align: top; padding: 9px 14px 9px 0; border-bottom: 1px solid var(--rule); }
+th { font-family: var(--font-mono); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-soft); font-weight: 500; }
+td code { white-space: nowrap; }
+
+/* bench */
+.bench { background: var(--bench); border: 1px solid var(--rule); border-radius: 6px; margin: 26px 0 30px; max-width: 920px; overflow: hidden; }
+.bench-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 10px 16px; border-bottom: 1px solid var(--rule); font-family: var(--font-mono); font-size: 11.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-soft); flex-wrap: wrap; }
+.bench-head b { color: var(--ink); font-weight: 500; }
+.bench-body { padding: 18px 16px; display: grid; gap: 16px; min-width: 0; }
+.controls { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center; font-family: var(--font-mono); font-size: 12.5px; color: var(--ink-soft); }
+.controls label { display: inline-flex; align-items: center; gap: 8px; }
+.controls output { color: var(--ink); min-width: 3.2em; font-variant-numeric: tabular-nums; }
+.btn { font-family: var(--font-mono); font-size: 12.5px; color: var(--ink); background: var(--paper); border: 1px solid var(--rule); border-radius: 4px; padding: 6px 12px; cursor: pointer; }
+.btn:hover { border-color: var(--cork); }
+.btn.on { border-color: var(--ink); box-shadow: inset 0 -2px 0 var(--cork); }
+.btn.primary { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.btn.primary:hover { background: var(--cork); border-color: var(--cork); }
+select, input[type="range"] { accent-color: var(--cork); font-family: var(--font-mono); font-size: 12.5px; }
+select { background: var(--paper); color: var(--ink); border: 1px solid var(--rule); border-radius: 4px; padding: 4px 6px; }
+input[type="range"] { width: 130px; }
+.readout { font-family: var(--font-mono); font-size: 12.5px; color: var(--ink-soft); display: flex; flex-wrap: wrap; gap: 6px 22px; font-variant-numeric: tabular-nums; }
+.readout b { color: var(--ink); font-weight: 500; }
+.live-code { margin: 0 !important; }
+canvas.plot { display: block; width: 100%; }
+.preset-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; font-family: var(--font-mono); font-size: 12px; color: var(--ink-soft); }
+
+/* demo type */
+.stage { background: var(--paper); border: 1px solid var(--rule); border-radius: 4px; padding: 28px 24px; overflow: hidden; }
+.demo-xl { font-family: var(--font-demo); font-weight: 800; font-size: clamp(36px, 6.4vw, 76px); line-height: 1; letter-spacing: -.025em; margin: 0; }
+.demo-l { font-family: var(--font-demo); font-weight: 700; font-size: clamp(26px, 3.6vw, 40px); line-height: 1.05; letter-spacing: -.02em; margin: 0; }
+.demo-p { font-family: var(--font-demo); font-weight: 500; font-size: 17px; line-height: 1.45; margin: 0; max-width: 46ch; }
+.show-masks [class$="-mask"], .show-masks .sl-mask, .show-masks .sw-mask, .show-masks .sc-mask { outline: 1px dashed var(--cork); outline-offset: -1px; }
+.pad-desc .sl-mask, .pad-desc .sw-mask, .pad-desc .sc-mask { padding-bottom: .14em; margin-bottom: -.14em; }
+
+/* split inspector */
+.s2-box { background: var(--paper); border: 1px solid var(--rule); border-radius: 4px; padding: 18px; max-width: 100%; }
+.s2-box .demo-p { font-size: 19px; max-width: none; }
+.insp .sl { box-shadow: inset 0 0 0 1px var(--moss); }
+.insp .sw { box-shadow: inset 0 -2px 0 var(--cork); }
+.insp .sc:nth-child(odd) { background: color-mix(in srgb, var(--moss) 16%, transparent); }
+pre.dom { max-height: 220px; white-space: pre-wrap; word-break: break-all; }
+
+/* rolling nav */
+.roll-nav { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 18px 28px; padding: 26px 20px; background: var(--paper); border: 1px solid var(--rule); border-radius: 4px; }
+.roll-nav a { font-family: var(--font-demo); font-weight: 700; font-size: clamp(18px, 2.4vw, 26px); color: var(--ink); text-decoration: none; text-transform: uppercase; letter-spacing: -.01em; line-height: 1.1; }
+.roll-nav .rc { position: relative; display: inline-block; }
+.roll-nav .rc .clone { position: absolute; left: 0; top: 100%; color: var(--cork); }
+
+/* scrollers */
+.scroller { position: relative; height: 400px; overflow-y: auto; background: var(--paper); border: 1px solid var(--rule); border-radius: 4px; overscroll-behavior: contain; }
+.scroll-hint { height: 300px; display: grid; place-items: center; font-family: var(--font-mono); font-size: 12px; color: var(--ink-soft); text-align: center; padding: 0 16px; }
+.s5-sec { padding: 40px 26px 60px; border-top: 1px dashed var(--rule); min-height: 300px; }
+.s5-sec .kick { font-family: var(--font-mono); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--cork); margin-bottom: 14px; }
+.s5-sec .demo-l { margin-bottom: 14px; }
+.sticky-tall { position: relative; height: 1300px; }
+.sticky-in { position: sticky; top: 0; height: 398px; display: grid; place-items: center; padding: 20px; }
+.s6-text { text-align: center; }
+.tracks { display: grid; gap: 22px; width: 100%; max-width: 560px; }
+.tr { display: grid; grid-template-columns: 110px minmax(0, 1fr); align-items: center; gap: 10px; font-family: var(--font-mono); font-size: 11.5px; color: var(--ink-soft); }
+.tr .rail { position: relative; height: 18px; border-bottom: 1px solid var(--rule); }
+.tr .knob { position: absolute; left: 0; top: 0; width: 18px; height: 18px; border-radius: 50%; }
+/* section choreography */
+.proj { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 26px; align-items: end; background: var(--paper); border: 1px solid var(--rule); border-radius: 4px; padding: 22px; }
+.proj .img { position: relative; aspect-ratio: 4 / 5; max-width: 100%; overflow: hidden; border-radius: 2px; }
+.proj .img-in { position: absolute; inset: 0; background-color: #b9844f; background-image: var(--cork-tex); background-size: 220px 220px; }
+.proj .img-in::after { content: ""; position: absolute; inset: 22% 18%; border-radius: 50%; box-shadow: inset 0 0 0 10px rgba(60,35,15,.25), 0 18px 30px rgba(40,20,5,.35); }
+.proj .kick { font-family: var(--font-mono); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--cork); margin-bottom: 12px; }
+.proj .rule { height: 2px; background: var(--ink); margin: 16px 0; transform-origin: left center; }
+.proj .meta { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 16px; }
+.proj .meta span { font-family: var(--font-mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; border: 1px solid var(--rule); border-radius: 20px; padding: 3px 10px; color: var(--ink-soft); }
+/* pinned beats */
+.beat-stage { position: relative; height: 398px; display: grid; place-items: center; padding: 20px; }
+.beat { position: absolute; inset: 0; display: grid; place-content: center; padding: 24px; text-align: center; }
+.beat .demo-l { max-width: 16ch; margin: 0 auto; }
+.beat-count { position: absolute; left: 18px; top: 14px; font-family: var(--font-mono); font-size: 12px; color: var(--ink-soft); }
+.beat-bar { position: absolute; left: 18px; right: 18px; bottom: 16px; height: 3px; background: var(--rule); }
+.beat-bar i { position: absolute; inset: 0; background: var(--cork); transform-origin: left center; transform: scaleX(0); }
+.after-pin { height: 260px; display: grid; place-items: center; font-family: var(--font-mono); font-size: 12px; color: var(--ink-soft); }
+/* gantt */
+.gantt { font-family: var(--font-mono); font-size: 11.5px; color: var(--ink-soft); position: relative; }
+.gantt .g-row { display: grid; grid-template-columns: 104px minmax(0, 1fr); align-items: center; height: 22px; }
+.gantt .g-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding-right: 8px; }
+.gantt .g-track { position: relative; height: 100%; border-left: 1px solid var(--rule); }
+.gantt .g-bar { position: absolute; top: 5px; height: 12px; background: var(--moss); border-radius: 2px; opacity: .85; }
+.gantt .g-ruler { display: grid; grid-template-columns: 104px minmax(0, 1fr); height: 18px; }
+.gantt .g-ticks { position: relative; border-top: 1px solid var(--rule); }
+.gantt .g-ticks span { position: absolute; top: 2px; transform: translateX(-50%); font-size: 10px; }
+.gantt .g-head { position: absolute; top: 0; bottom: 18px; width: 2px; background: var(--cork); pointer-events: none; }
+.gantt .g-lane { position: absolute; left: 104px; right: 0; top: 0; bottom: 0; pointer-events: none; }
+input.scrub { width: 100%; }
+footer.colophon { margin-top: 96px; padding-top: 16px; border-top: 1px solid var(--rule); color: var(--ink-soft); font-size: 15px; max-width: var(--measure); }
+
+@media (max-width: 960px) {
+  .shell { grid-template-columns: minmax(0, 1fr); gap: 0; }
+  .index { position: static; max-height: none; padding-block: 18px 0; border-bottom: 1px solid var(--rule); }
+  .index summary { display: block; cursor: pointer; font-family: var(--font-mono); font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-soft); padding: 8px 0 12px; }
+  .index .brand { display: none; }
+  main { padding-top: 12px; }
+}
+@media (max-width: 700px) {
+  body { font-size: 17.5px; }
+  .proj { grid-template-columns: minmax(0, 1fr); }
+  .proj .img { max-width: 260px; }
+  .gantt .g-row, .gantt .g-ruler { grid-template-columns: 78px minmax(0, 1fr); }
+  .gantt .g-lane { left: 78px; }
+  .tr { grid-template-columns: 84px minmax(0, 1fr); }
+  input[type="range"] { width: 110px; }
+}
+</style>
+
+<div class="shell">
+  <nav class="index" aria-label="Chapters">
+    <details id="toc-details" open>
+      <summary>Chapters</summary>
+      <a class="brand" href="#top">Anatomy of a Reveal</a>
+      <div class="part">I · Forensics</div>
+      <ol><li><a href="#forensics"><span>01</span><span>Taking a site apart</span></a></li></ol>
+      <div class="part">II · Type</div>
+      <ol>
+        <li><a href="#splitting"><span>02</span><span>What splitting does</span></a></li>
+        <li><a href="#mask"><span>03</span><span>The masked rise</span></a></li>
+        <li><a href="#roll"><span>04</span><span>Letters that roll</span></a></li>
+      </ol>
+      <div class="part">III · Scroll</div>
+      <ol>
+        <li><a href="#trigger"><span>05</span><span>Scroll as a trigger</span></a></li>
+        <li><a href="#clock"><span>06</span><span>Scroll as the clock</span></a></li>
+        <li><a href="#smoothing"><span>07</span><span>Smoothing the input</span></a></li>
+      </ol>
+      <div class="part">IV · Sections</div>
+      <ol>
+        <li><a href="#section"><span>08</span><span>A section load-in</span></a></li>
+        <li><a href="#pinned"><span>09</span><span>Pinned beats &amp; snap</span></a></li>
+        <li><a href="#anime"><span>10</span><span>The same craft in Anime.js</span></a></li>
+      </ol>
+      <div class="part">V · Craft</div>
+      <ol>
+        <li><a href="#shipping"><span>11</span><span>Reveals that hold up</span></a></li>
+        <li><a href="#practice"><span>12</span><span>A practice plan</span></a></li>
+        <li><a href="#reference"><span>A</span><span>Recipes &amp; reference</span></a></li>
+      </ol>
+      <div class="slowmo">
+        <label for="slowmo"><input type="checkbox" id="slowmo"> Slow GSAP demos to ¼ speed</label>
+        <p>Runs <code>gsap.globalTimeline.timeScale(0.25)</code>. Scroll-mapped demos follow your scroll, so they aren't affected.</p>
+      </div>
+    </details>
+  </nav>
+
+  <main id="top">
+    <header class="hero">
+      <div class="eyebrow">A workbook · deconstructing Oryzo, Design is Funny &amp; Anime.js</div>
+      <h1>Anatomy of a <em>Reveal</em></h1>
+      <p class="lede">How the text and sections on three sites you admire actually come into view, read from their production code and rebuilt here as benches you can take apart.</p>
+      <p class="how">This picks up where Motion &amp; Matter left off. It assumes you're comfortable with tweens, eases, timelines and the basics of ScrollTrigger, and it goes deep on one subject: making type and sections arrive. Every value quoted from the three sites came from their live code on October 17, 2026. Sites change, so treat those numbers as a snapshot of good taste rather than a specification.</p>
+    </header>
+
+    <!-- PART I -->
+    <div class="part-head"><span class="num">Part I</span><h2>Forensics</h2><p>What the three sites are really doing, and how to find out for yourself.</p></div>
+
+    <section class="ch" id="forensics">
+      <h3><span class="n">01</span>Taking a site apart</h3>
+      <p>Before building anything, it's worth knowing how I got the numbers in this guide, because the method is a skill you'll use for the rest of your career. I loaded each site in a headless browser, collected every JavaScript file it downloaded, and searched those files for the fingerprints libraries leave behind: license banners, class names like <code>ScrollTrigger</code>, option names like <code>mask:"lines"</code>, and ease strings like <code>"expo.out"</code>. Production code is minified, so variable names are scrambled, but strings, option keys and numbers survive. That's usually enough to reconstruct a recipe.</p>
+      <p>You can do a lighter version in any browser console. Open the site, then try these:</p>
+      <pre class="code">gsap?.version                       // is GSAP on the page, and which version?
+ScrollTrigger?.getAll().length      // how many scroll triggers exist
+gsap.globalTimeline.timeScale(0.2)  // slow every GSAP animation to a fifth
+document.querySelectorAll("[aria-hidden] div, .char, .word").length  // split text?
+// Many modern sites bundle GSAP privately, so window.gsap is undefined.
+// Then search the Sources panel (Cmd+Opt+F in Chrome DevTools) for "ScrollTrigger",
+// "SplitText", "lenis" or "onScroll".</pre>
+
+      <h4>What turned up</h4>
+      <p>The three sites turned out to represent three different schools of thought, which makes them a better curriculum than three sites built the same way would have been.</p>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Site</th><th>Stack found in the code</th><th>How text arrives</th></tr></thead>
+        <tbody>
+          <tr><td><b>Oryzo</b><br>by Lusion</td><td>A custom engine on Three.js, with classes like <code>ScrollManager</code>, <code>ScrollDomRange</code>, <code>ScreenPaintDistortion</code> and <code>MSDFTextGeometry</code>. GSAP's SplitText 3.14.2 is bundled, but only to split text. I found no ScrollTrigger and no Lenis.</td><td>No tweens at all. Every frame, each section's position on screen is turned into a progress number, and every character's opacity, blur and offset is computed from that number. Scroll <em>is</em> the clock.</td></tr>
+          <tr><td><b>Design is Funny</b><br>Daniele Buffa</td><td>Next.js and React, GSAP with ScrollTrigger and SplitText 3.11.5, Lenis for smooth scroll (<code>duration: .75</code> with an exponential ease-out), and Three.js for the 3D smiley rings.</td><td>A ScrollTrigger fires <em>once</em> when a block is 25% into the viewport, and a timed timeline plays. Characters rise and un-tilt over 2.5 seconds with <code>expo.out</code>. Scroll is only the trigger.</td></tr>
+          <tr><td><b>Anime.js</b><br>the library's own site</td><td>Anime.js 4.5.0 with its built-in scroll observer and text splitter, plus Three.js for the exploded 3D drawing.</td><td>Mostly <code>onScroll</code> observers with enter and leave thresholds, some linked to timelines with smoothing (<code>sync: .9</code>). Eases like <code>inOutExpo</code>, <code>outQuart</code> and <code>outQuint</code>.</td></tr>
+        </tbody>
+      </table></div>
+      <p>The second and third columns already contain the most important idea in this guide. Scroll can play two different roles. It can be a <em>trigger</em>, a moment when a timed animation starts (Design is Funny). Or it can be the <em>clock</em> itself, where the scroll position directly sets how far along the animation is (Lusion). Anime.js sits in between, and so does GSAP's <code>scrub</code>. Choosing between those two roles is a design decision, and it changes how a site feels more than any ease or duration does.</p>
+
+      <div class="bench" id="b-schools">
+        <div class="bench-head"><span><b>Bench 01</b> · one line, three schools</span><span id="s1-label">triggered tween</span></div>
+        <div class="bench-body">
+          <div class="stage"><p class="demo-xl" id="s1-text">Every line arrives on cue.</p></div>
+          <div class="controls">
+            <button class="btn on" data-school="funny">Triggered tween</button>
+            <button class="btn" data-school="lusion">Scroll as clock</button>
+            <button class="btn" data-school="anime">Anime.js split</button>
+            <button class="btn primary" id="s1-play">Replay</button>
+            <label for="s1-p" id="s1-p-wrap" hidden>progress <input type="range" id="s1-p" min="0" max="1" step="0.001" value="1"><output id="s1-p-out">1.00</output></label>
+          </div>
+          <pre class="code live-code" id="s1-code"></pre>
+        </div>
+      </div>
+      <p>Play each one. The triggered tween has its own rhythm: once it starts, it finishes on its own schedule no matter what you do. The scroll-as-clock version has no rhythm of its own. Drag the progress slider, which stands in for scrolling, and the letters follow your hand exactly, including backward. Neither is better. A triggered tween feels like an event, like a curtain going up. A scroll-mapped reveal feels like you're operating something, like turning a dial. Lusion's site feels like a physical object because almost everything on it is the second kind.</p>
+    </section>
+
+    <!-- PART II -->
+    <div class="part-head"><span class="num">Part II</span><h2>Type</h2><p>Splitting text into pieces, hiding them behind masks, and bringing them back.</p></div>
+
+    <section class="ch" id="splitting">
+      <h3><span class="n">02</span>What splitting really does</h3>
+      <p>You can't animate a single letter of a heading, because the letter isn't an element. Splitting fixes that by rewriting the heading's HTML so every line, word or character becomes its own element that can be moved. GSAP's SplitText, Anime.js's <code>splitText</code> and every hand-rolled version do the same three jobs.</p>
+      <p>The first job is breaking the text into words and characters. That sounds trivial, but modern splitters use the browser's <code>Intl.Segmenter</code> so emoji, accented letters and scripts like Thai don't get broken into garbage. The second job is detecting <em>lines</em>, and this is the clever part. Lines don't exist in HTML. They're whatever the browser decides when it wraps text to the container's width. So the splitter wraps every word in an element, measures each word's vertical position with <code>offsetTop</code>, and groups words that share a position into a line. That means line splitting depends on the font, the font size and the container width at the moment of measurement. The third job is accessibility. A screen reader reading thirty separate letter elements would spell the heading out, so the splitter puts the original sentence in an <code>aria-label</code> and hides the pieces from assistive technology.</p>
+
+      <div class="bench" id="b-split">
+        <div class="bench-head"><span><b>Bench 02</b> · split inspector</span><span>drag the width to watch lines re-form</span></div>
+        <div class="bench-body">
+          <div class="s2-box insp" id="s2-box"><p class="demo-p" id="s2-text">Lines don't exist in HTML. They're whatever the browser decides when the text wraps, so a splitter has to measure them.</p></div>
+          <div class="controls">
+            <label for="s2-lines"><input type="checkbox" id="s2-lines" checked> lines</label>
+            <label for="s2-words"><input type="checkbox" id="s2-words" checked> words</label>
+            <label for="s2-chars"><input type="checkbox" id="s2-chars"> chars</label>
+            <label for="s2-mask">mask <select id="s2-mask"><option value="">none</option><option value="lines" selected>lines</option><option value="words">words</option><option value="chars">chars</option></select></label>
+            <label for="s2-w">container width <input type="range" id="s2-w" min="35" max="100" step="1" value="100"><output id="s2-w-out">100%</output></label>
+          </div>
+          <div class="readout"><span>lines <b id="s2-nl">0</b></span><span>words <b id="s2-nw">0</b></span><span>chars <b id="s2-nc">0</b></span><span>masks <b id="s2-nm">0</b></span><span>re-splits <b id="s2-ns">0</b></span></div>
+          <pre class="code live-code" id="s2-code"></pre>
+          <pre class="code live-code dom" id="s2-dom" aria-label="Generated HTML"></pre>
+        </div>
+      </div>
+      <p>Green outlines are lines, the underline marks each word, and alternating tints mark characters. Now narrow the container. With <code>autoSplit: true</code>, SplitText watches the element's width and re-splits when it changes, so lines regroup. The counter shows each re-split. That's the key fact about line splitting: <em>it goes stale</em>. Any animation you attached to the old lines now points at elements that no longer exist, which is why SplitText 3.13 added the <code>onSplit</code> callback. Return your animation from it, and SplitText rebuilds the animation on every re-split and even preserves its progress.</p>
+      <pre class="code">SplitText.create(".headline", {
+  type: "lines, words",
+  mask: "lines",            // wrap each line in an overflow: clip container
+  autoSplit: true,          // re-split when fonts load or the width changes
+  onSplit(self) {           // runs on every split; return the animation
+    return gsap.from(self.lines, { yPercent: 100, stagger: 0.08, duration: 1.1, ease: "expo.out" });
+  }
+});</pre>
+      <p>The <code>mask</code> option is the other big change in recent versions. It wraps each line, word or character in an extra element with <code>overflow: clip</code>. Look at the generated HTML under the bench with a mask on. You'll see each line wrapped in a <code>sl-mask</code> element. Masks are what make text appear to slide out from behind an invisible edge, which is the subject of the next chapter. Before masks were built in, everyone wrote that wrapper by hand.</p>
+      <div class="callout trap"><span class="tag">Trap</span><p>Splitting before your web fonts load measures lines with the fallback font, which has different widths, so you get lines that break in the wrong places once the real font arrives. SplitText even warns about this in the console. Either split inside <code>document.fonts.ready.then(...)</code> or use <code>autoSplit</code>. Lusion splits with <code>autoSplit: false</code> and calls <code>split()</code> again manually inside its own resize handler, which is the same idea under its own control.</p></div>
+    </section>
+
+    <section class="ch" id="mask">
+      <h3><span class="n">03</span>The masked rise</h3>
+      <p>The single most common text reveal on award-winning sites is a line or word rising from behind an invisible edge. It works because of a perceptual trick. A word that fades in is plainly appearing. A word that slides up from behind a hard edge reads as if it was always there, waiting below the surface. The mask gives the motion a horizon, and the horizon gives it weight. Everything else in this chapter is variation on that.</p>
+
+      <div class="bench" id="b-mask">
+        <div class="bench-head"><span><b>Bench 03</b> · mask reveal lab</span><span id="s3-name">preset: Design is Funny heading</span></div>
+        <div class="bench-body">
+          <div class="stage" id="s3-stage"><p class="demo-xl" id="s3-text">Type that arrives with real weight.</p></div>
+          <div class="preset-row">presets
+            <button class="btn on" data-preset="funny">Design is Funny heading</button>
+            <button class="btn" data-preset="funnyp">Design is Funny paragraph</button>
+            <button class="btn" data-preset="lines">Classic line rise</button>
+            <button class="btn" data-preset="oryzo">Oryzo card lines</button>
+          </div>
+          <div class="controls">
+            <label for="s3-unit">animate <select id="s3-unit"><option>lines</option><option>words</option><option selected>chars</option></select></label>
+            <label for="s3-maskby">mask <select id="s3-maskby"><option value="">none</option><option>lines</option><option selected>words</option><option>chars</option></select></label>
+            <label for="s3-y">yPercent <input type="range" id="s3-y" min="0" max="120" step="5" value="60"><output id="s3-y-out">60</output></label>
+            <label for="s3-rx">rotateX <input type="range" id="s3-rx" min="0" max="90" step="5" value="70"><output id="s3-rx-out">70°</output></label>
+            <label for="s3-fade"><input type="checkbox" id="s3-fade" checked> fade</label>
+          </div>
+          <div class="controls">
+            <label for="s3-dur">duration <input type="range" id="s3-dur" min="0.3" max="3" step="0.1" value="2.5"><output id="s3-dur-out">2.5s</output></label>
+            <label for="s3-st">stagger <input type="range" id="s3-st" min="0" max="0.15" step="0.005" value="0.03"><output id="s3-st-out">0.030</output></label>
+            <label for="s3-ease">ease <select id="s3-ease"><option selected>expo.out</option><option>power4.out</option><option>power2.out</option><option>back.out(1.4)</option><option>power2.inOut</option><option>none</option></select></label>
+            <label for="s3-show"><input type="checkbox" id="s3-show"> show masks</label>
+            <label for="s3-pad"><input type="checkbox" id="s3-pad"> pad masks for descenders</label>
+            <button class="btn primary" id="s3-play">Play</button>
+          </div>
+          <pre class="code live-code" id="s3-code"></pre>
+        </div>
+      </div>
+
+      <h4>Reading the Design is Funny recipe</h4>
+      <p>Here is the heading reveal from Daniele Buffa's site, as found in its code. It splits into words and characters and masks each <em>word</em>, but animates each <em>character</em>. Every character starts 60% of its height below its resting place, tilted back 70 degrees on the X axis around its bottom edge, and invisible. Over 2.5 seconds with <code>expo.out</code>, staggered 0.03 seconds apart, each one rises, swings upright and fades in. Turn on "show masks" and play it slowly with the slow-motion switch. The tilt is what makes it distinctive. Because each letter rotates around its baseline, it looks like it's being stood up from lying flat, more like a sign being raised than a word sliding.</p>
+      <p>The duration surprises people. Two and a half seconds is very long for text. It works because <code>expo.out</code> does almost all the travel in the first fifth of the time. The heading is readable within about half a second, and the remaining two seconds are a long, nearly imperceptible settle. That combination is a big part of the "premium" feeling on sites like this: fast to read and slow to rest.</p>
+      <p>The paragraph preset is the same site's recipe for running text. It animates whole words instead of characters, uses a smaller rise and a smaller tilt, and uses a much smaller stagger (the site uses 0.01 to 0.05 depending on the block), so a paragraph arrives as a soft wave instead of a typewriter effect. Larger text gets more drama, and smaller text gets less. That's a rule worth keeping.</p>
+
+      <h4>Masks change the motion more than eases do</h4>
+      <p>Try the classic line rise, then switch the mask from lines to none. Without a mask the lines slide up through the space where the line above them sits, so the motion looks like overlapping. With the mask, each line is clipped at its own baseline, so lines seem to emerge from slots. Now try masking by chars while animating chars: each letter rises in its own tiny window, which looks mechanical, like a split-flap display. The mask decides <em>where the horizon is</em>, and that's a compositional choice like cropping a photograph.</p>
+      <div class="callout trap"><span class="tag">Trap</span><p>A mask clips everything outside its box, including descenders (g, y, p) and italic overhangs. In many fonts the line box is shorter than the glyphs, so the bottoms of letters get cut off in the final resting state. Turn on "show masks", pick lines, and look at the "y" in "really" and "weight". The standard fix is to add a little bottom padding to each mask and cancel it with a negative margin, so the layout doesn't move. That's what the "pad masks for descenders" switch does. Design is Funny solves the same problem by setting a custom line-height on its split words.</p></div>
+      <div class="callout"><span class="tag">Small detail, big difference</span><p>Design is Funny gives every split character a rotation of 0.01 degrees. That tiny rotation forces the browser to render the character on the GPU with subpixel positioning, which stops letters from jittering by a pixel as they settle at the end of a long ease. Lusion does the same with <code>translateZ(0)</code> on its lines. You'll only notice the jitter on slow, long eases, which is exactly when it matters.</p></div>
+    </section>
+
+    <section class="ch" id="roll">
+      <h3><span class="n">04</span>Letters that roll</h3>
+      <p>Both Design is Funny and Oryzo use the same hover effect on their navigation: the letters of a link roll upward and an identical copy rolls in from below. It's a split-text effect used for interaction instead of entrance, and it's a good example of how one technique can be reused.</p>
+
+      <div class="bench" id="b-roll">
+        <div class="bench-head"><span><b>Bench 04</b> · rolling navigation</span><span>hover or tab through the links</span></div>
+        <div class="bench-body">
+          <nav class="roll-nav" id="s4-nav" aria-label="Demo navigation">
+            <a href="#roll"><span class="rl">01/Index</span></a>
+            <a href="#roll"><span class="rl">02/Studio</span></a>
+            <a href="#roll"><span class="rl">03/Work</span></a>
+            <a href="#roll"><span class="rl">04/Contact</span></a>
+          </nav>
+          <div class="controls">
+            <label for="s4-st">stagger <input type="range" id="s4-st" min="0" max="0.06" step="0.002" value="0.012"><output id="s4-st-out">0.012</output></label>
+            <label for="s4-dur">duration <input type="range" id="s4-dur" min="0.2" max="1.4" step="0.05" value="0.7"><output id="s4-dur-out">0.70s</output></label>
+            <label for="s4-ease">ease <select id="s4-ease"><option selected>expo.inOut</option><option>power3.out</option><option>power2.inOut</option><option>back.out(1.6)</option></select></label>
+            <label for="s4-dir"><input type="checkbox" id="s4-dir" checked> roll from the side you entered</label>
+          </div>
+          <pre class="code live-code" id="s4-code"></pre>
+        </div>
+      </div>
+      <p>Mechanically, each character is masked and given a clone of itself positioned directly underneath (<code>top: 100%</code>). Moving the character up by 100% of its height carries the clone into view while the original exits through the top of the mask. The defaults above are Design is Funny's exact values: a 0.012-second stagger, 0.7 seconds, <code>expo.inOut</code>. Their version stacks two full copies of the text. Lusion's <code>LetterFlippers</code> class appends a clone inside each masked character, which is the approach this bench uses.</p>
+      <p>Lusion adds one refinement worth copying. It checks which direction your pointer was moving when it entered, and rolls the letters starting from that side. With the checkbox on, enter a link from the right and the roll starts at the last letter. It's subtle, but it makes the effect feel like it responds to your hand rather than playing a canned animation. Turn it off and compare.</p>
+      <div class="callout trap"><span class="tag">Trap</span><p>Keyboard users never hover. Bind the same effect to <code>focus</code> and <code>blur</code> (this bench does), and make sure the clone is hidden from screen readers. Otherwise a link reads its own name twice. SplitText's default <code>aria: "auto"</code> handles the split itself, but a clone you add by hand needs <code>aria-hidden="true"</code>.</p></div>
+    </section>
+
+    <!-- PART III -->
+    <div class="part-head"><span class="num">Part III</span><h2>Scroll</h2><p>The two roles scroll can play, and the smoothing that sits between your hand and the screen.</p></div>
+
+    <section class="ch" id="trigger">
+      <h3><span class="n">05</span>Scroll as a trigger</h3>
+      <p>Design is Funny's reveals follow one pattern, repeated on every block. A ScrollTrigger watches the block with <code>start: "25% bottom"</code> and <code>once: true</code>. When the point a quarter of the way down the block crosses the bottom edge of the viewport, the trigger fires one time, flips a piece of React state, and the reveal timeline plays at its own pace. The trigger then destroys itself. Scrolling back up does nothing, and scrolling down again doesn't replay it.</p>
+      <p>Each of those choices is deliberate. <code>"25% bottom"</code> waits until a meaningful slice of the block is visible, so the reveal happens where you're looking instead of at the very bottom edge where you aren't. <code>once: true</code> makes the reveal feel like the page settling into place, rather than a performance that repeats every time you pass. It also means a fast scroller who lands mid-page sees content that has already arrived. Replaying on every pass is the more common amateur choice, and it tends to make pages feel busy.</p>
+
+      <div class="bench" id="b-trigger">
+        <div class="bench-head"><span><b>Bench 05</b> · reveal on enter</span><span>scroll inside the box</span></div>
+        <div class="bench-body">
+          <div class="scroller" id="s5-scroller">
+            <div class="scroll-hint">Scroll down inside this box.<br>Markers show where each trigger fires.</div>
+            <div class="s5-sec"><div class="kick">01 · Material</div><p class="demo-l">Cork grows back every nine years.</p><p class="demo-p">The bark is harvested by hand and the tree keeps living, which makes it one of the few materials that improves the forest it comes from.</p></div>
+            <div class="s5-sec"><div class="kick">02 · Craft</div><p class="demo-l">Made slowly, used for decades.</p><p class="demo-p">A good object earns its place on the table by staying useful long after its novelty wears off.</p></div>
+            <div class="s5-sec"><div class="kick">03 · Restraint</div><p class="demo-l">Arrive once, then get out of the way.</p><p class="demo-p">A reveal that replays on every pass turns reading into waiting. Let content settle and stay settled.</p></div>
+            <div class="scroll-hint">End of the scroll region.</div>
+          </div>
+          <div class="controls">
+            <label for="s5-start">start <select id="s5-start"><option selected>25% bottom</option><option>top bottom</option><option>top 80%</option><option>top center</option></select></label>
+            <label for="s5-mode">behavior <select id="s5-mode"><option value="once" selected>once: true</option><option value="reverse">replay (toggleActions)</option></select></label>
+            <button class="btn" id="s5-reset">Reset &amp; scroll to top</button>
+          </div>
+          <pre class="code live-code" id="s5-code"></pre>
+        </div>
+      </div>
+      <p>The code mirrors the real site's structure. Each block gets a timeline built in advance and paused, and the ScrollTrigger only decides <em>when</em> to press play. Separating "what the animation is" from "when it starts" makes both easier to change, and it's how you'd build a reusable reveal component in Webflow or anywhere else: one function that builds a reveal for any element, and one trigger that plays it.</p>
+    </section>
+
+    <section class="ch" id="clock">
+      <h3><span class="n">06</span>Scroll as the clock</h3>
+      <p>Lusion's approach is a different philosophy, and it's worth understanding in detail because it's how most of the very top tier of interactive sites work. There are no reveal tweens on Oryzo. Lusion's scroll manager measures each section's position on screen every frame and expresses it as a ratio. Then, for each character, it calls one small function, <code>fit</code>, that maps a slice of that ratio onto a property.</p>
+      <pre class="code">// Lusion's fit(), rewritten readably. It's a clamped range map with an optional ease.
+function fit(value, inMin, inMax, outMin, outMax, ease) {
+  let t = (value - inMin) / (inMax - inMin);   // where is value inside [inMin, inMax]?
+  t = Math.min(1, Math.max(0, t));             // clamp to 0..1
+  if (ease) t = ease(t);
+  return outMin + t * (outMax - outMin);       // map onto [outMin, outMax]
+}
+
+// From Oryzo's hero, per character (i of n), every frame:
+const e = i / (n - 1);                                   // 0 for the first char, 1 for the last
+char.style.opacity   = fit(p, 0.5 + e * 0.2, 1.5 + e * 0.2, 0, 1);
+char.style.transform = `translate3d(${fit(p, 0.5 + e * 0.2, 1.5 + e * 0.2, 1, 0, cubicOut)}em, 0, 0)`;
+char.style.filter    = `blur(${blurAmount}em)`;           // blur is turned off on mobile layouts</pre>
+      <p>Look at the input ranges. Every character gets its own <em>window</em> of the progress value. The first character's window starts at 0.5, the last one's at 0.7, and each window is 1.0 wide. That's a stagger, but expressed in scroll distance instead of time. Two numbers control the whole effect: the <em>spread</em> (how far apart the windows start) and the <em>width</em> (how long each character takes to complete). The bench draws every character's window as a bar, so you can see the stagger as a shape.</p>
+
+      <div class="bench" id="b-clock">
+        <div class="bench-head"><span><b>Bench 06</b> · per-character windows</span><span>scroll the box or drag progress</span></div>
+        <div class="bench-body">
+          <div class="scroller" id="s6-scroller">
+            <div class="sticky-tall" id="s6-tall">
+              <div class="sticky-in"><p class="demo-l s6-text" id="s6-text">Scroll maps straight onto every letter.</p></div>
+            </div>
+          </div>
+          <canvas class="plot" id="s6-plot" height="150" aria-label="Each character's progress window"></canvas>
+          <div class="controls">
+            <label for="s6-p">progress <input type="range" id="s6-p" min="0" max="1" step="0.001" value="0.6"><output id="s6-p-out">0.60</output></label>
+            <label for="s6-spread">spread <input type="range" id="s6-spread" min="0" max="1.5" step="0.05" value="0.6"><output id="s6-spread-out">0.60</output></label>
+            <label for="s6-width">window <input type="range" id="s6-width" min="0.05" max="1.5" step="0.05" value="0.5"><output id="s6-width-out">0.50</output></label>
+          </div>
+          <div class="controls">
+            <label for="s6-blur">blur <input type="range" id="s6-blur" min="0" max="0.5" step="0.01" value="0.18"><output id="s6-blur-out">0.18em</output></label>
+            <label for="s6-x">x offset <input type="range" id="s6-x" min="0" max="2" step="0.05" value="0.8"><output id="s6-x-out">0.80em</output></label>
+            <label for="s6-ease"><input type="checkbox" id="s6-ease" checked> cubicOut on movement</label>
+          </div>
+          <pre class="code live-code" id="s6-code"></pre>
+        </div>
+      </div>
+      <p>Spend a few minutes here, because these two numbers are a whole design vocabulary. Spread at zero makes every letter move together, like a single block fading in. A large spread with a small window makes letters appear one at a time, like typing. A small spread with a large window gives the soft, smeared wave Lusion uses, where many letters are in motion at once and each is at a slightly different stage. Turn the blur up and the wave looks like a camera pulling focus through the line.</p>
+      <p>Notice two more things in Lusion's code. Offsets are in <code>em</code>, so the motion scales with the type: a heading moves farther than a caption without separate settings. And the blur is switched off for the mobile layout, because CSS <code>filter: blur()</code> on dozens of elements is expensive and phones pay for it in dropped frames. That's a performance decision made at the level of a single property, which is the kind of care that separates studio work from tutorials.</p>
+      <div class="callout"><span class="tag">When to choose the clock</span><p>Scroll-mapped motion is best when the content and the motion are one idea, when scrolling feels like moving through a space or operating a mechanism. It's a poor fit for ordinary reading content, because the reader controls the speed and a slow scroller sees half-formed words. Notice that Lusion uses it on short, display-sized lines, and that Design is Funny uses triggered tweens on its paragraphs. A common and effective approach is to mix them: scroll-mapped for the hero and set pieces, triggered for everything you're meant to read.</p></div>
+    </section>
+
+    <section class="ch" id="smoothing">
+      <h3><span class="n">07</span>Smoothing the input</h3>
+      <p>Raw scroll input is ugly. A mouse wheel moves in discrete jumps, trackpads produce bursts with momentum, and touchscreens add their own inertia. If your animation is mapped directly to that signal, it inherits every twitch. All three sites smooth the input somewhere between the hand and the screen, and they do it in three different places.</p>
+      <p>Design is Funny smooths the <em>scroll itself</em> with Lenis, configured with a 0.75-second duration and an exponential ease-out (<code>t =&gt; Math.min(1, 1.001 - Math.pow(2, -10 * t))</code>). Lenis intercepts wheel input and animates the page's scroll position toward the target, so everything on the page, triggers included, sees smooth motion. Anime.js smooths the <em>link</em> between scroll and animation: <code>sync: .9</code> on its observers means the animation chases the scroll position, with the number controlling how tightly. GSAP's version of that is a numeric <code>scrub</code>. Lusion smooths <em>inside its own engine</em>, with lerps and a class called <code>SecondOrderDynamics</code>, which is a spring-like follower that can overshoot and settle.</p>
+
+      <div class="bench" id="b-smooth">
+        <div class="bench-head"><span><b>Bench 07</b> · three followers, one scroll</span><span>scroll in quick flicks</span></div>
+        <div class="bench-body">
+          <div class="scroller" id="s7-scroller">
+            <div class="sticky-tall" id="s7-tall" style="height:1600px">
+              <div class="sticky-in">
+                <div class="tracks">
+                  <div class="tr"><span>scrub: true</span><div class="rail"><i class="knob" id="s7-k0"></i></div></div>
+                  <div class="tr"><span>scrub: 0.6</span><div class="rail"><i class="knob" id="s7-k1"></i></div></div>
+                  <div class="tr"><span>scrub: 2</span><div class="rail"><i class="knob" id="s7-k2"></i></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <canvas class="plot" id="s7-plot" height="150" aria-label="Progress of each follower over the last three seconds"></canvas>
+          <pre class="code">ScrollTrigger.create({ trigger: ".track", scrub: true, animation: tween }); // locked to the scrollbar
+ScrollTrigger.create({ trigger: ".track", scrub: 0.6,  animation: tween }); // catches up over 0.6s
+ScrollTrigger.create({ trigger: ".track", scrub: 2,    animation: tween }); // heavy, floaty
+
+// Design is Funny smooths the page scroll itself instead:
+const lenis = new Lenis({ duration: 0.75, easing: t =&gt; Math.min(1, 1.001 - Math.pow(2, -10 * t)) });
+function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
+requestAnimationFrame(raf);</pre>
+        </div>
+      </div>
+      <p>The plot shows each follower's progress over the last three seconds. Flick the scroll and watch the lines. The locked follower steps with every wheel tick. The 0.6 follower turns those steps into a curve. The heavy follower smooths so much that it lags well behind your hand. Smoothing is a dial between responsive and graceful, and too much makes a site feel disconnected, like steering a boat. Most polished sites land somewhere around a half second to one second of catch-up.</p>
+      <div class="callout trap"><span class="tag">Trap</span><p>Don't stack smoothing layers without noticing. Lenis plus a numeric scrub means two smoothers in series, and their lags add together. If you use Lenis, <code>scrub: true</code> is often enough, because the scroll is already smooth. Also note that smooth-scroll libraries take over native scrolling, which affects anchor links, find-in-page, and some accessibility tools. Lenis handles most of these well, but it's still a decision to make deliberately.</p></div>
+    </section>
+
+    <!-- PART IV -->
+    <div class="part-head"><span class="num">Part IV</span><h2>Sections</h2><p>From single lines to whole blocks that assemble, hold, and hand off.</p></div>
+
+    <section class="ch" id="section">
+      <h3><span class="n">08</span>Choreographing a section load-in</h3>
+      <p>A section entering is a small piece of choreography with a cast: an image, a kicker label, a heading, a rule, a paragraph, some metadata. The beginner move is to fade them all in together, or to stagger them in reading order with no overlap. The professional move is to give each member a role, sequence them by importance, and overlap them so they read as one gesture.</p>
+
+      <div class="bench" id="b-section">
+        <div class="bench-head"><span><b>Bench 08</b> · a project section, assembled</span><span>drag the scrubber</span></div>
+        <div class="bench-body">
+          <div class="proj" id="s8-proj">
+            <div class="img" id="s8-img"><div class="img-in" id="s8-in"></div></div>
+            <div>
+              <div class="kick" id="s8-kick">Case 03 · Material study</div>
+              <p class="demo-l" id="s8-title">A coaster that takes itself seriously.</p>
+              <div class="rule" id="s8-rule"></div>
+              <p class="demo-p" id="s8-para">Every surface choice was tested against a single question: does it make the smallest moment of the day feel more considered?</p>
+              <div class="meta"><span class="s8-m">Product</span><span class="s8-m">3D</span><span class="s8-m">Motion</span></div>
+            </div>
+          </div>
+          <div class="controls">
+            <button class="btn primary" id="s8-play">Play from start</button>
+            <label for="s8-ov">overlap <input type="range" id="s8-ov" min="0" max="0.8" step="0.05" value="0.5"><output id="s8-ov-out">0.50s</output></label>
+            <label for="s8-counter"><input type="checkbox" id="s8-counter" checked> counter-move the image</label>
+          </div>
+          <input type="range" class="scrub" id="s8-scrub" min="0" max="1000" value="1000" aria-label="Section timeline progress">
+          <div class="gantt" id="s8-gantt"></div>
+          <pre class="code live-code" id="s8-code"></pre>
+        </div>
+      </div>
+
+      <h4>The counter-move curtain</h4>
+      <p>The image reveal is taken from Design is Funny's project hovers. The image's outer frame slides up from below (<code>yPercent: 100 → 0</code>), while the picture inside slides <em>down</em> by the same amount (<code>yPercent: -100 → 0</code>) and scales from 1.3 to 1, both over one second with <code>expo.inOut</code>. Because the two movements cancel, the picture appears to stay still while a window opens over it. Turn off the counter-move and replay. Without it, the image just slides in as a card. With it, the image feels like it was already there, behind the page. It's the same principle as the masked text rise in Chapter 3, applied to an image.</p>
+      <h4>Sequencing by importance</h4>
+      <p>The order in the timeline isn't reading order. The image leads because it's the largest element and sets the stage. The kicker comes in early and quietly, giving context. The heading arrives with the most motion, character by character. The rule draws in to divide heading from body. The paragraph follows by lines, with less movement. The metadata simply fades up last. Each element's amount of motion matches its importance, and the overlap ties them together. Set overlap to zero and you'll see the same pieces arrive like a list being read aloud.</p>
+    </section>
+
+    <section class="ch" id="pinned">
+      <h3><span class="n">09</span>Pinned beats and snapping</h3>
+      <p>Some sections hold still while you scroll and tell a short story in place: a few statements replacing each other, a product turning, a diagram assembling. Lusion's Oryzo sections do this with their own math, mapping ranges like <code>fit(r, 2.75, 3.5, 0, 1)</code>, where the numbers are measured in screen heights. GSAP's version is a pinned, scrubbed timeline with labels. The bench uses three beats of text that hand off to each other.</p>
+
+      <div class="bench" id="b-pinned">
+        <div class="bench-head"><span><b>Bench 09</b> · three beats, pinned</span><span>scroll inside the box</span></div>
+        <div class="bench-body">
+          <div class="scroller" id="s9-scroller">
+            <section id="s9-sec">
+              <div class="beat-stage" id="s9-stage">
+                <span class="beat-count" id="s9-count">01 / 03</span>
+                <div class="beat"><p class="demo-l" id="s9-b1">Lift. The rim holds the mug a little higher.</p></div>
+                <div class="beat"><p class="demo-l" id="s9-b2">Insulate. Cork keeps the heat off the table.</p></div>
+                <div class="beat"><p class="demo-l" id="s9-b3">Grip. Nothing slides, even when it's wet.</p></div>
+                <div class="beat-bar"><i id="s9-bar"></i></div>
+              </div>
+            </section>
+            <div class="after-pin">The pin releases here, and the page moves on.</div>
+          </div>
+          <div class="controls">
+            <label for="s9-scrub">scrub <select id="s9-scrub"><option value="true">true</option><option value="0.6" selected>0.6</option><option value="1.5">1.5</option></select></label>
+            <label for="s9-snap"><input type="checkbox" id="s9-snap" checked> snap to beats</label>
+          </div>
+          <div class="readout"><span>label <b id="s9-label">one</b></span><span>progress <b id="s9-prog">0.000</b></span></div>
+          <pre class="code live-code" id="s9-code"></pre>
+        </div>
+      </div>
+      <p>Labels are what make this structure work. Each beat ends at a named point in the timeline, and <code>snap: "labelsDirectional"</code> tells ScrollTrigger that whenever scrolling stops, it should glide to the nearest label in the direction the user was going. The user can never be stranded with two half-formed sentences on screen. Turn snapping off and stop scrolling mid-transition to see the problem it solves.</p>
+      <p>Look at the eases inside the hand-off too. The outgoing beat leaves with <code>power2.in</code> and the incoming one arrives with <code>power3.out</code>. That's Chapter 2 of Motion &amp; Matter applied to type: exits accelerate away, and entrances decelerate into place. In a scrubbed timeline, eases still matter, because they shape how scroll distance is distributed across the motion.</p>
+      <div class="callout trap"><span class="tag">Trap</span><p>Pinning changes the page's layout, because ScrollTrigger adds space so the content after the pinned section doesn't slide underneath. Create ScrollTriggers in the order they appear on the page, top to bottom, or call <code>ScrollTrigger.sort()</code>. A trigger created before a pin above it was measured without that extra space and will fire in the wrong place.</p></div>
+    </section>
+
+    <section class="ch" id="anime">
+      <h3><span class="n">10</span>The same craft in Anime.js</h3>
+      <p>The Anime.js homepage shows that none of this belongs to GSAP. Anime.js 4 has its own text splitter, stagger, timeline and scroll observer, and the concepts map almost one to one. Knowing both makes you better at each, because you start to separate the <em>idea</em> from the API.</p>
+
+      <div class="bench" id="b-anime">
+        <div class="bench-head"><span><b>Bench 10</b> · masked lines with Anime.js 4.5</span><span>scroll inside the box</span></div>
+        <div class="bench-body">
+          <div class="scroller" id="s10-scroller">
+            <div class="scroll-hint">Scroll down. Anime.js draws its own debug markers.</div>
+            <div class="s5-sec"><p class="demo-l s10-h">The same reveal, written in a different library.</p></div>
+            <div class="s5-sec"><p class="demo-l s10-h">Concepts carry over. Syntax is the easy part.</p></div>
+            <div class="s5-sec"><p class="demo-l s10-h">Watch the threshold order, though.</p></div>
+            <div class="scroll-hint">End of the scroll region.</div>
+          </div>
+          <div class="controls">
+            <label for="s10-sync">sync <select id="s10-sync"><option value="play pause">"play pause" (trigger)</option><option value="true">true (locked)</option><option value="0.25" selected>0.25 (smoothed)</option></select></label>
+            <label for="s10-enter">enter <select id="s10-enter"><option selected>bottom top</option><option>center top</option><option>bottom-=60 top</option></select></label>
+            <button class="btn" id="s10-reset">Rebuild &amp; scroll to top</button>
+          </div>
+          <pre class="code live-code" id="s10-code"></pre>
+        </div>
+      </div>
+
+      <h4>Translation table</h4>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Idea</th><th>GSAP</th><th>Anime.js 4</th></tr></thead>
+        <tbody>
+          <tr><td>Animate</td><td><code>gsap.to(el, { y: 0, duration: 1 })</code></td><td><code>animate(el, { y: 0, duration: 1000 })</code></td></tr>
+          <tr><td>Units of time</td><td>seconds</td><td>milliseconds</td></tr>
+          <tr><td>Ease names</td><td><code>"expo.out"</code>, <code>"power4.out"</code></td><td><code>"outExpo"</code>, <code>"outQuint"</code></td></tr>
+          <tr><td>From/to</td><td><code>gsap.fromTo(el, {y:"100%"}, {y:0})</code></td><td><code>animate(el, { y: ["100%", "0%"] })</code></td></tr>
+          <tr><td>Stagger</td><td><code>stagger: 0.08</code> or <code>{ each, from, grid }</code></td><td><code>delay: stagger(80, { from, grid })</code></td></tr>
+          <tr><td>Split with masks</td><td><code>SplitText.create(el, { type: "lines", mask: "lines" })</code></td><td><code>splitText(el, { lines: { wrap: "clip" } })</code></td></tr>
+          <tr><td>Timeline</td><td><code>gsap.timeline()</code> with position parameter</td><td><code>createTimeline()</code> with time positions</td></tr>
+          <tr><td>Scroll link</td><td><code>scrollTrigger: { trigger, start, end, scrub }</code></td><td><code>autoplay: onScroll({ target, enter, leave, sync })</code></td></tr>
+          <tr><td>Threshold syntax</td><td><code>"top bottom"</code> means <em>element</em> top meets <em>viewport</em> bottom</td><td><code>"bottom top"</code> means <em>container</em> bottom meets <em>target</em> top</td></tr>
+          <tr><td>Smoothing</td><td><code>scrub: 0.6</code> (seconds of catch-up)</td><td><code>sync: 0.25</code> (lower is smoother, <code>true</code> is locked)</td></tr>
+          <tr><td>Cleanup</td><td><code>gsap.context()</code> / <code>ctx.revert()</code></td><td><code>createScope()</code> / <code>scope.revert()</code></td></tr>
+        </tbody>
+      </table></div>
+      <div class="callout trap"><span class="tag">Trap</span><p>The threshold order is reversed between the two libraries, and it will catch you when you switch. ScrollTrigger's <code>start: "top bottom"</code> names the element's edge first and the viewport's second. Anime's <code>enter: "bottom top"</code> names the <em>container's</em> edge first and the <em>target's</em> second. I confirmed this in Anime's source rather than trusting memory. Both strings mean the same moment: the element's top reaches the bottom of the screen.</p></div>
+      <div class="callout trap"><span class="tag">Trap I hit while building this bench</span><p>Anime's splitter measures lines only after <code>document.fonts.ready</code> resolves, so right after you call <code>splitText(el, { lines: true })</code>, the <code>lines</code> array is still empty. Animate it immediately and nothing moves, with only a console warning ("No target found") to tell you why. My first version of this bench made exactly that mistake. The fix is <code>addEffect()</code>: pass it a function that builds the animation, and Anime runs it once lines exist and again after every re-split, cleaning up the previous animation each time. It's the same idea as SplitText's <code>onSplit</code>.</p></div>
+      <p>Anime's <code>sync</code> deserves a closer look. The default, <code>"play pause"</code>, is a trigger: it plays on enter and pauses on leave. <code>true</code> locks the animation to scroll like <code>scrub: true</code>. A number below 1 smooths the link, and in the 4.5 source that number sets how much of the gap is closed each frame. So lower numbers are smoother and heavier, which is the opposite direction from GSAP's <code>scrub</code> seconds. The Anime.js homepage uses <code>.9</code>, which is a light touch.</p>
+    </section>
+
+    <!-- PART V -->
+    <div class="part-head"><span class="num">Part V</span><h2>Craft</h2><p>The details that decide whether reveals feel finished.</p></div>
+
+    <section class="ch" id="shipping">
+      <h3><span class="n">11</span>Reveals that hold up</h3>
+      <h4>Never flash the final state</h4>
+      <p>If your script runs after the page paints, visitors see the finished layout for a moment, then it vanishes and animates back in. That flash is the most common sign of an unfinished site. Design is Funny avoids it by keeping each text block hidden with CSS until its split is ready, then setting the container visible in the same moment it hides the characters: <code>t.set(el, { autoAlpha: 1 }).set(chars, { autoAlpha: 0, ... })</code>. The general pattern is to hide reveal targets in CSS (for example a <code>.js-reveal { visibility: hidden }</code> class added only when JavaScript runs), and let the animation un-hide them. Make sure content still shows if the script fails, or a broken CDN takes your whole site's text down with it.</p>
+      <h4>Respect reduced motion without losing the content</h4>
+      <p>Wrap your reveals in <code>gsap.matchMedia()</code>. For <code>prefers-reduced-motion: reduce</code>, replace rises, tilts and blurs with a short opacity fade, or show content immediately. Never leave elements hidden waiting for an animation that won't run. Anime.js's <code>createScope({ mediaQueries })</code> does the same job.</p>
+      <h4>Mind the cost of splitting</h4>
+      <p>Every character becomes an element. A 40-word paragraph split into characters adds roughly 250 elements, and each one becomes a separate layer while it's moving. Split headings into characters, but split paragraphs into lines or words. Be especially careful with <code>filter: blur()</code>, which is one of the most expensive properties to animate. Lusion turns it off on mobile layouts entirely. Revert splits you no longer need, because <code>split.revert()</code> restores the original HTML and frees those elements.</p>
+      <h4>Applying this in Webflow</h4>
+      <p>Webflow's Interactions panel can run GSAP-based text and scroll effects natively now, and how much it covers changes quickly, so check the current state before deciding. For anything beyond it, the custom-code route works well: add GSAP, ScrollTrigger and SplitText in the site's custom code, mark reveal targets with a data attribute such as <code>data-reveal="lines"</code> in the Designer, and write one script that finds every marked element and builds the right reveal for it. That turns these recipes into a system your whole team can apply without writing code, which fits well with building tools that multiply a team's output. One Webflow-specific detail: wait for <code>document.fonts.ready</code> before splitting, because Webflow sites often load fonts asynchronously.</p>
+      <h4>Using em for motion</h4>
+      <p>Both Lusion (<code>translate3d(1em, 0, 0)</code>) and SplitText's percentage-based <code>yPercent</code> express motion relative to the type, not in pixels. That's what keeps a reveal looking the same at 18px and at 120px, and on a phone and a wide screen. Pixel offsets look heavy on small text and timid on large text.</p>
+    </section>
+
+    <section class="ch" id="practice">
+      <h3><span class="n">12</span>A practice plan</h3>
+      <p>The studies build on each other. Each is small enough to finish in an evening, and the constraints are what turn them into practice rather than copying.</p>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Study</th><th>What it trains</th><th>Constraint that makes it hard</th></tr></thead>
+        <tbody>
+          <tr><td>1 · One headline, five reveals</td><td>Masks, units, easing</td><td>The same five-word headline revealed five ways. For each, write one adjective for how it feels before you show anyone.</td></tr>
+          <tr><td>2 · Rebuild the Funny heading by ear</td><td>Observation</td><td>Without looking at this guide's values, recreate the Design is Funny heading reveal from watching it in slow motion. Then compare your numbers to the real ones.</td></tr>
+          <tr><td>3 · A rolling nav</td><td>Split text for interaction</td><td>Direction-aware, keyboard accessible, and no double-reading by screen readers.</td></tr>
+          <tr><td>4 · A reading page that reveals once</td><td>Triggers, restraint</td><td>Five sections with text and images. Nothing replays, nothing flashes on load, and it works with JavaScript turned off.</td></tr>
+          <tr><td>5 · A scroll-mapped hero line</td><td>Per-element windows with <code>fit</code></td><td>Write the <code>fit</code> loop yourself without GSAP tweens, Lusion-style. Make it run smoothly with blur on desktop and switch blur off on phones.</td></tr>
+          <tr><td>6 · A section that assembles</td><td>Choreography, counter-move</td><td>Six elements, one timeline, under 1.6 seconds. It must read as one gesture.</td></tr>
+          <tr><td>7 · Three pinned beats</td><td>Pin, labels, snap</td><td>Works with a trackpad, a mouse wheel and the keyboard. No state where two beats are half visible after scrolling stops.</td></tr>
+          <tr><td>8 · Port study 6 to Anime.js</td><td>Separating ideas from APIs</td><td>Same timing and feel, different library. Note every place the translation wasn't one to one.</td></tr>
+          <tr><td>9 · A Webflow reveal system</td><td>Shipping it for a team</td><td>A <code>data-reveal</code> attribute with three variants that designers can apply in the Designer, with reduced-motion support built in.</td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <section class="ch" id="reference">
+      <h3><span class="n">A</span>Recipes and reference</h3>
+      <h4>Recipes, as found in the sites' code</h4>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Effect</th><th>Site</th><th>Values</th></tr></thead>
+        <tbody>
+          <tr><td>Heading reveal</td><td>Design is Funny</td><td>split <code>chars,words</code>, words masked; chars from <code>yPercent: 60, rotateX: 70, autoAlpha: 0</code>, origin bottom; <code>2.5s expo.out</code>, stagger <code>0.03</code></td></tr>
+          <tr><td>Paragraph reveal</td><td>Design is Funny</td><td>words from <code>yPercent: 40, rotateX: 60, autoAlpha: 0</code>; <code>2.5s expo.out</code>, stagger <code>0.01–0.05</code></td></tr>
+          <tr><td>Reveal trigger</td><td>Design is Funny</td><td><code>start: "25% bottom", once: true</code></td></tr>
+          <tr><td>Nav hover roll</td><td>Design is Funny</td><td>chars <code>yPercent: -100</code>, <code>0.7s expo.inOut</code>, stagger <code>0.012</code></td></tr>
+          <tr><td>Image curtain</td><td>Design is Funny</td><td>outer <code>yPercent 100 → 0</code>, inner <code>yPercent -100 → 0</code> and <code>scale 1.3 → 1</code>, <code>1s expo.inOut</code></td></tr>
+          <tr><td>Smooth scroll</td><td>Design is Funny</td><td>Lenis <code>duration: 0.75</code>, ease <code>1.001 - 2^(-10t)</code></td></tr>
+          <tr><td>UI transitions</td><td>Design is Funny</td><td>CSS <code>transform .5s cubic-bezier(.22,1,.36,1)</code>, which is close to an ease-out quint</td></tr>
+          <tr><td>Hero copy</td><td>Oryzo</td><td>split <code>lines,chars</code>; per char <code>fit(p, .5+e*.2, 1.5+e*.2)</code> → opacity, <code>x: 1em → 0</code> with cubicOut, blur in em (off on mobile)</td></tr>
+          <tr><td>Card text</td><td>Oryzo</td><td>split <code>lines</code> with <code>mask: "lines"</code>; lines mapped from <code>-1em → 0</code></td></tr>
+          <tr><td>Letter flip hover</td><td>Oryzo</td><td><code>mask: "chars"</code>, a clone per char at <code>top: 100%</code>, direction from pointer movement</td></tr>
+          <tr><td>Section observers</td><td>Anime.js</td><td><code>onScroll({ enter: "top top", leave: "bottom bottom", sync: .9 })</code></td></tr>
+        </tbody>
+      </table></div>
+      <h4>Where to read further</h4>
+      <p>The <a href="https://gsap.com/docs/v3/Plugins/SplitText/" target="_blank" rel="noopener">SplitText documentation</a> covers <code>mask</code>, <code>autoSplit</code> and <code>onSplit</code> in detail. The <a href="https://gsap.com/docs/v3/Plugins/ScrollTrigger/" target="_blank" rel="noopener">ScrollTrigger documentation</a> covers snapping and pinning. Anime.js's <a href="https://animejs.com/documentation/" target="_blank" rel="noopener">documentation</a> covers <code>onScroll</code> and <code>splitText</code>. <a href="https://lenis.darkroom.engineering/" target="_blank" rel="noopener">Lenis</a> is the smooth-scroll library Design is Funny uses. <a href="https://lusion.co/" target="_blank" rel="noopener">Lusion's own site</a> is worth studying with the same forensic eye you used here.</p>
+    </section>
+
+    <footer class="colophon">Benches run GSAP 3.13 with ScrollTrigger and SplitText, and Anime.js 4.5.0. Site values were read from production bundles on October 17, 2026; minified code can hide intent, so treat them as close readings rather than official specifications.</footer>
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/SplitText.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/animejs@4.5.0/dist/bundles/anime.umd.min.js"></script>
+<script>
+(function () {
+"use strict";
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+if (!window.gsap || !window.SplitText) {
+  $$(".bench-body").forEach(b => b.insertAdjacentHTML("afterbegin", '<p class="readout">The animation library did not load. Check your connection and reload the page.</p>'));
+  return;
+}
+gsap.registerPlugin(ScrollTrigger, SplitText);
+const tok = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const CLS = { linesClass: "sl", wordsClass: "sw", charsClass: "sc" };
+
+/* cork texture for the section bench */
+document.documentElement.style.setProperty("--cork-tex", `url("data:image/svg+xml,${encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="220" height="220"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="7"/><feColorMatrix values="0 0 0 0 .35  0 0 0 0 .2  0 0 0 0 .08  0 0 0 .55 0"/></filter><rect width="220" height="220" filter="url(#n)"/></svg>')}")`);
+
+/* code highlighter */
+const esc = s => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+const KW = /\b(const|let|function|return|new|if|true|false|for)\b/g;
+function hl(src) {
+  const re = /(\/\/.*$)|("[^"\n]*"|'[^'\n]*'|`[^`\n]*`)/gm;
+  let out = "", last = 0, m;
+  while ((m = re.exec(src))) {
+    out += esc(src.slice(last, m.index)).replace(KW, '<span class="k">$1</span>');
+    out += m[1] ? '<span class="c">' + esc(m[1]) + "</span>" : '<span class="s">' + esc(m[2]) + "</span>";
+    last = re.lastIndex;
+  }
+  return out + esc(src.slice(last)).replace(KW, '<span class="k">$1</span>');
+}
+$$("pre.code:not(.live-code)").forEach(p => { p.innerHTML = hl(p.textContent); });
+const setCode = (el, t) => { el.innerHTML = hl(t); };
+
+const fit = (v, a, b, from, to, ease) => { let t = (v - a) / (b - a); t = t < 0 ? 0 : t > 1 ? 1 : t; if (ease) t = ease(t); return from + t * (to - from); };
+const cubicOut = t => 1 - Math.pow(1 - t, 3);
+
+const themeHooks = [];
+const fireTheme = () => themeHooks.forEach(f => f());
+window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", fireTheme);
+new MutationObserver(fireTheme).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+function fitCanvas(c) {
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const w = c.clientWidth, h = +c.getAttribute("height");
+  c.style.height = h + "px";
+  if (c.width !== Math.round(w * dpr) || c.height !== Math.round(h * dpr)) { c.width = Math.round(w * dpr); c.height = Math.round(h * dpr); }
+  const ctx = c.getContext("2d"); ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, w, h);
+  return { ctx, w, h };
+}
+
+/* index */
+const tocLinks = $$(".index li a");
+const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) tocLinks.forEach(a => a.classList.toggle("active", a.getAttribute("href") === "#" + e.target.id)); }), { rootMargin: "-30% 0px -60% 0px" });
+$$("section.ch").forEach(s => io.observe(s));
+const wide = window.matchMedia("(min-width: 961px)");
+const syncToc = () => { $("#toc-details").open = wide.matches; };
+syncToc(); wide.addEventListener("change", syncToc);
+$("#toc-details").addEventListener("click", e => { if (!wide.matches && e.target.closest("li a")) $("#toc-details").open = false; });
+$("#slowmo").addEventListener("change", e => gsap.globalTimeline.timeScale(e.target.checked ? 0.25 : 1));
+
+/* gantt */
+function makeGantt(el, getTl) {
+  let head;
+  function build() {
+    const tl = getTl(), total = tl.duration() || 1;
+    let html = '<div class="g-lane"><div class="g-head"></div></div>';
+    tl.getChildren(false, true, true).forEach(k => {
+      const l = k.startTime() / total * 100, w = k.totalDuration() / total * 100;
+      html += `<div class="g-row"><span class="g-label">${(k.vars && k.vars.data) || "tween"}</span><div class="g-track"><div class="g-bar" style="left:${l}%;width:${Math.max(w, .8)}%"></div></div></div>`;
+    });
+    let ticks = ""; const step = total > 3 ? 1 : .5;
+    for (let t = 0; t <= total + 1e-6; t += step) ticks += `<span style="left:${t / total * 100}%">${t.toFixed(t % 1 ? 1 : 0)}s</span>`;
+    el.innerHTML = html + `<div class="g-ruler"><span></span><div class="g-ticks">${ticks}</div></div>`;
+    head = $(".g-head", el); update();
+  }
+  function update() { if (head) head.style.left = getTl().progress() * 100 + "%"; }
+  return { build, update };
+}
+
+function boot() {
+
+/* ================= 01 THREE SCHOOLS ================= */
+(function schools() {
+  const el = $("#s1-text"), code = $("#s1-code"), pWrap = $("#s1-p-wrap"), pIn = $("#s1-p");
+  let mode = "funny", split = null, aSplit = null, tween = null, sweep = null;
+  const state = { p: 1 };
+  function clear() {
+    if (tween) { tween.revert ? tween.revert() : tween.kill(); tween = null; }
+    if (sweep) { sweep.kill(); sweep = null; }
+    if (split) { split.revert(); split = null; }
+    if (aSplit) { aSplit.revert(); aSplit = null; }
+  }
+  function applyLusion() {
+    const ch = split.chars, n = ch.length, spread = 0.6, width = 0.6, t = state.p * (spread + width);
+    ch.forEach((c, i) => {
+      const e = i / (n - 1), u = fit(t, e * spread, e * spread + width, 0, 1);
+      c.style.opacity = u;
+      c.style.filter = `blur(${((1 - u) * 0.2).toFixed(3)}em)`;
+      c.style.transform = `translate3d(${((1 - cubicOut(u)) * 0.9).toFixed(3)}em,0,0)`;
+    });
+    pIn.value = state.p; $("#s1-p-out").textContent = state.p.toFixed(2);
+  }
+  function play(atEnd) {
+    clear();
+    pWrap.hidden = mode !== "lusion";
+    if (mode === "funny") {
+      split = SplitText.create(el, { type: "words,chars", mask: "words", ...CLS });
+      tween = gsap.from(split.chars, { yPercent: 60, rotateX: 70, autoAlpha: 0, transformOrigin: "50% 100%", transformPerspective: 600, duration: 2.5, ease: "expo.out", stagger: 0.03 });
+      if (atEnd) tween.progress(1);
+      setCode(code,
+`// Design is Funny: scroll only triggers it; time runs the animation.
+const split = SplitText.create(el, { type: "words,chars", mask: "words" });
+gsap.from(split.chars, {
+  yPercent: 60, rotateX: 70, autoAlpha: 0, transformOrigin: "50% 100%",
+  duration: 2.5, ease: "expo.out", stagger: 0.03
+});`);
+    } else if (mode === "lusion") {
+      split = SplitText.create(el, { type: "words,chars", ...CLS });
+      state.p = atEnd ? 1 : 0; applyLusion();
+      if (!atEnd) sweep = gsap.to(state, { p: 1, duration: 2.4, ease: "none", onUpdate: applyLusion });
+      setCode(code,
+`// Lusion: no tween. Every frame, scroll progress p sets each letter directly.
+const t = p * (spread + width);
+split.chars.forEach((c, i) => {
+  const e = i / (n - 1);
+  const u = fit(t, e * spread, e * spread + width, 0, 1);   // this letter's own window
+  c.style.opacity   = u;
+  c.style.filter    = \`blur(\${(1 - u) * 0.2}em)\`;
+  c.style.transform = \`translate3d(\${(1 - cubicOut(u)) * 0.9}em, 0, 0)\`;
+});`);
+    } else if (window.anime) {
+      aSplit = anime.splitText(el, { words: { wrap: "clip" }, chars: true });
+      tween = anime.animate(aSplit.chars, { y: ["110%", "0%"], opacity: [0, 1], duration: 1400, delay: anime.stagger(28), ease: "outExpo" });
+      if (atEnd) tween.complete && tween.complete();
+      setCode(code,
+`// Anime.js 4: its own splitter, stagger and eases. Time in milliseconds.
+const { chars } = splitText(el, { words: { wrap: "clip" }, chars: true });
+animate(chars, {
+  y: ["110%", "0%"], opacity: [0, 1],
+  duration: 1400, delay: stagger(28), ease: "outExpo"
+});`);
+    }
+    $("#s1-label").textContent = { funny: "triggered tween", lusion: "scroll as clock", anime: "anime.js split" }[mode];
+  }
+  $$("#b-schools [data-school]").forEach(b => b.addEventListener("click", () => {
+    $$("#b-schools [data-school]").forEach(x => x.classList.toggle("on", x === b));
+    mode = b.dataset.school; play(false);
+  }));
+  $("#s1-play").addEventListener("click", () => play(false));
+  pIn.addEventListener("input", () => { if (sweep) sweep.kill(); state.p = +pIn.value; if (split) applyLusion(); });
+  play(true);
+})();
+
+/* ================= 02 SPLIT INSPECTOR ================= */
+(function inspector() {
+  const el = $("#s2-text"), box = $("#s2-box");
+  let split = null, count = 0;
+  const cb = { lines: $("#s2-lines"), words: $("#s2-words"), chars: $("#s2-chars") }, maskSel = $("#s2-mask");
+  function pretty(html) { return html.replace(/></g, ">\n<").slice(0, 1400) + (html.length > 1400 ? "\n…" : ""); }
+  function report(self) {
+    count++;
+    $("#s2-nl").textContent = self.lines.length; $("#s2-nw").textContent = self.words.length; $("#s2-nc").textContent = self.chars.length;
+    $("#s2-nm").textContent = self.masks.length; $("#s2-ns").textContent = count - 1;
+    $("#s2-dom").textContent = pretty(el.innerHTML);
+  }
+  function build() {
+    if (split) split.revert();
+    count = 0;
+    let types = Object.keys(cb).filter(k => cb[k].checked);
+    if (!types.length) { cb.words.checked = true; types = ["words"]; }
+    let mask = maskSel.value;
+    if (mask && !types.includes(mask)) { mask = ""; maskSel.value = ""; }
+    const type = types.join(",");
+    split = SplitText.create(el, { type, ...(mask ? { mask } : {}), ...CLS, autoSplit: true, onSplit: self => { report(self); } });
+    setCode($("#s2-code"), `SplitText.create("#demo", {\n  type: "${type}",${mask ? `\n  mask: "${mask}",` : ""}\n  linesClass: "sl", wordsClass: "sw", charsClass: "sc",\n  autoSplit: true,\n  onSplit: self => console.log(self.lines.length, "lines")\n});`);
+  }
+  [...Object.values(cb), maskSel].forEach(c => c.addEventListener("change", build));
+  $("#s2-w").addEventListener("input", e => { box.style.width = e.target.value + "%"; $("#s2-w-out").textContent = e.target.value + "%"; });
+  build();
+})();
+
+/* ================= 03 MASK LAB ================= */
+(function maskLab() {
+  const el = $("#s3-text"), stage = $("#s3-stage");
+  const c = { unit: $("#s3-unit"), maskby: $("#s3-maskby"), y: $("#s3-y"), rx: $("#s3-rx"), fade: $("#s3-fade"), dur: $("#s3-dur"), st: $("#s3-st"), ease: $("#s3-ease") };
+  const presets = {
+    funny:  { unit: "chars", maskby: "words", y: 60, rx: 70, fade: true, dur: 2.5, st: 0.03, ease: "expo.out", name: "Design is Funny heading" },
+    funnyp: { unit: "words", maskby: "", y: 40, rx: 60, fade: true, dur: 2.5, st: 0.03, ease: "expo.out", name: "Design is Funny paragraph" },
+    lines:  { unit: "lines", maskby: "lines", y: 110, rx: 0, fade: false, dur: 1.2, st: 0.08, ease: "power4.out", name: "Classic line rise" },
+    oryzo:  { unit: "lines", maskby: "lines", y: 100, rx: 0, fade: false, dur: 1.1, st: 0.12, ease: "power2.out", name: "Oryzo card lines (time-based stand-in)" }
+  };
+  let split = null, tween = null;
+  function outs() {
+    $("#s3-y-out").textContent = c.y.value; $("#s3-rx-out").textContent = c.rx.value + "°";
+    $("#s3-dur-out").textContent = (+c.dur.value).toFixed(1) + "s"; $("#s3-st-out").textContent = (+c.st.value).toFixed(3);
+  }
+  function build(atEnd) {
+    if (tween) tween.kill();
+    if (split) split.revert();
+    const unit = c.unit.value, order = ["lines", "words", "chars"];
+    let mask = c.maskby.value;
+    const need = new Set(["lines", "words"]); if (unit === "chars") need.add("chars");
+    if (mask) need.add(mask);
+    const type = order.filter(t => need.has(t)).join(",");
+    split = SplitText.create(el, { type, ...(mask ? { mask } : {}), ...CLS });
+    const rx = +c.rx.value, fade = c.fade.checked;
+    const vars = { yPercent: +c.y.value, duration: +c.dur.value, ease: c.ease.value, stagger: +c.st.value };
+    if (rx) Object.assign(vars, { rotateX: rx, transformOrigin: "50% 100%", transformPerspective: 600 });
+    if (fade) vars.autoAlpha = 0;
+    tween = gsap.from(split[unit], vars);
+    if (atEnd) tween.progress(1);
+    outs();
+    const lines = [`  yPercent: ${vars.yPercent},`];
+    if (rx) lines.push(`  rotateX: ${rx}, transformOrigin: "50% 100%", transformPerspective: 600,`);
+    if (fade) lines.push(`  autoAlpha: 0,`);
+    lines.push(`  duration: ${vars.duration}, ease: "${vars.ease}", stagger: ${vars.stagger}`);
+    setCode($("#s3-code"), `const split = SplitText.create(".headline", { type: "${type}"${mask ? `, mask: "${mask}"` : ""} });\ngsap.from(split.${unit}, {\n${lines.join("\n")}\n});`);
+  }
+  function applyPreset(k) {
+    const p = presets[k];
+    Object.keys(c).forEach(key => { if (key === "fade") c.fade.checked = p.fade; else c[key].value = p[key]; });
+    $("#s3-name").textContent = "preset: " + p.name;
+    $$("#b-mask [data-preset]").forEach(b => b.classList.toggle("on", b.dataset.preset === k));
+    build(false);
+  }
+  $$("#b-mask [data-preset]").forEach(b => b.addEventListener("click", () => applyPreset(b.dataset.preset)));
+  Object.values(c).forEach(ctrl => ctrl.addEventListener(ctrl.type === "range" ? "input" : "change", () => {
+    $("#s3-name").textContent = "custom"; $$("#b-mask [data-preset]").forEach(b => b.classList.remove("on")); build(true);
+  }));
+  $("#s3-play").addEventListener("click", () => build(false));
+  $("#s3-show").addEventListener("change", e => stage.classList.toggle("show-masks", e.target.checked));
+  $("#s3-pad").addEventListener("change", e => stage.classList.toggle("pad-desc", e.target.checked));
+  build(true);
+})();
+
+/* ================= 04 ROLLING NAV ================= */
+(function rolling() {
+  const links = $$("#s4-nav a"), st = $("#s4-st"), dur = $("#s4-dur"), ease = $("#s4-ease"), dir = $("#s4-dir");
+  const items = links.map(a => {
+    const span = $(".rl", a);
+    a.setAttribute("aria-label", span.textContent);
+    const split = SplitText.create(span, { type: "chars", mask: "chars", charsClass: "rc", aria: "none" });
+    split.chars.forEach(ch => { const k = document.createElement("span"); k.className = "clone"; k.setAttribute("aria-hidden", "true"); k.textContent = ch.textContent; ch.appendChild(k); });
+    return { a, chars: split.chars };
+  });
+  function roll(item, up, fromSide) {
+    gsap.to(item.chars, { yPercent: up ? -100 : 0, duration: +dur.value, ease: ease.value, overwrite: true, stagger: { each: +st.value, from: fromSide } });
+  }
+  items.forEach(item => {
+    const side = e => {
+      if (!dir.checked || e.clientX === undefined) return "start";
+      const r = item.a.getBoundingClientRect(); return e.clientX > r.left + r.width / 2 ? "end" : "start";
+    };
+    item.a.addEventListener("pointerenter", e => roll(item, true, side(e)));
+    item.a.addEventListener("pointerleave", e => roll(item, false, side(e)));
+    item.a.addEventListener("focus", () => roll(item, true, "start"));
+    item.a.addEventListener("blur", () => roll(item, false, "start"));
+    item.a.addEventListener("click", e => e.preventDefault());
+  });
+  function show() {
+    $("#s4-st-out").textContent = (+st.value).toFixed(3); $("#s4-dur-out").textContent = (+dur.value).toFixed(2) + "s";
+    setCode($("#s4-code"),
+`const split = SplitText.create(link, { type: "chars", mask: "chars" });
+split.chars.forEach(ch => {                    // a copy of each letter sits just below it
+  const clone = ch.cloneNode(true);
+  clone.setAttribute("aria-hidden", "true");
+  Object.assign(clone.style, { position: "absolute", left: 0, top: "100%" });
+  ch.appendChild(clone);
+});
+link.addEventListener("pointerenter", e => gsap.to(split.chars, {
+  yPercent: -100, duration: ${(+dur.value).toFixed(2)}, ease: "${ease.value}", overwrite: true,
+  stagger: { each: ${(+st.value).toFixed(3)}, from: ${dir.checked ? 'enteredFromRight(e) ? "end" : "start"' : '"start"'} }
+}));`);
+  }
+  [st, dur].forEach(x => x.addEventListener("input", show)); [ease, dir].forEach(x => x.addEventListener("change", show));
+  show();
+})();
+
+/* ================= 05 TRIGGER ONCE ================= */
+(function triggerOnce() {
+  const scroller = $("#s5-scroller"), secs = $$(".s5-sec", scroller), startSel = $("#s5-start"), modeSel = $("#s5-mode");
+  let ctx, splits = [];
+  function build() {
+    if (ctx) ctx.revert();
+    splits.forEach(s => s.revert()); splits = [];
+    const once = modeSel.value === "once", start = startSel.value;
+    ctx = gsap.context(() => {
+      secs.forEach((sec, i) => {
+        const h = SplitText.create($(".demo-l", sec), { type: "words,chars", mask: "words", ...CLS });
+        const p = SplitText.create($(".demo-p", sec), { type: "lines", mask: "lines", ...CLS });
+        splits.push(h, p);
+        const tl = gsap.timeline({ paused: true })
+          .from($(".kick", sec), { autoAlpha: 0, y: 8, duration: 0.6, ease: "power2.out" })
+          .from(h.chars, { yPercent: 60, rotateX: 70, autoAlpha: 0, transformOrigin: "50% 100%", transformPerspective: 600, duration: 1.8, ease: "expo.out", stagger: 0.025 }, "<0.1")
+          .from(p.lines, { yPercent: 100, duration: 1.2, ease: "expo.out", stagger: 0.08 }, "<0.3");
+        const markers = { startColor: tok("--moss"), endColor: tok("--cork"), fontSize: "10px", indent: 10 + i * 4 };
+        if (once) ScrollTrigger.create({ trigger: sec, scroller, start, once: true, markers, onEnter: () => tl.play() });
+        else ScrollTrigger.create({ trigger: sec, scroller, start, end: "bottom top", markers, animation: tl, toggleActions: "play none none reverse" });
+      });
+    }, scroller);
+    setCode($("#s5-code"),
+`const tl = gsap.timeline({ paused: true })             // built once, waiting
+  .from(".kick",     { autoAlpha: 0, y: 8, duration: 0.6 })
+  .from(head.chars,  { yPercent: 60, rotateX: 70, autoAlpha: 0, duration: 1.8, ease: "expo.out", stagger: 0.025 }, "<0.1")
+  .from(para.lines,  { yPercent: 100, duration: 1.2, ease: "expo.out", stagger: 0.08 }, "<0.3");
+
+ScrollTrigger.create({
+  trigger: section,
+  start: "${start}",${once ? `\n  once: true,                                           // fire one time, then self-destruct\n  onEnter: () => tl.play()` : `\n  animation: tl,\n  toggleActions: "play none none reverse"              // replays on every pass`}
+});`);
+  }
+  [startSel, modeSel].forEach(s => s.addEventListener("change", () => { scroller.scrollTop = 0; build(); }));
+  $("#s5-reset").addEventListener("click", () => { scroller.scrollTop = 0; build(); });
+  build();
+})();
+
+/* ================= 06 SCROLL AS CLOCK ================= */
+(function clock() {
+  const scroller = $("#s6-scroller"), tall = $("#s6-tall"), el = $("#s6-text"), plot = $("#s6-plot");
+  const c = { p: $("#s6-p"), spread: $("#s6-spread"), width: $("#s6-width"), blur: $("#s6-blur"), x: $("#s6-x"), ease: $("#s6-ease") };
+  const split = SplitText.create(el, { type: "words,chars", ...CLS });
+  let p = 0.6, st;
+  function apply() {
+    const spread = +c.spread.value, width = +c.width.value, blur = +c.blur.value, xo = +c.x.value, eased = c.ease.checked;
+    const ch = split.chars, n = ch.length, t = p * (spread + width);
+    ch.forEach((ci, i) => {
+      const e = n > 1 ? i / (n - 1) : 0, u = fit(t, e * spread, e * spread + width, 0, 1);
+      const m = eased ? cubicOut(u) : u;
+      ci.style.opacity = u.toFixed(3);
+      ci.style.filter = blur > 0 && u < 1 ? `blur(${((1 - u) * blur).toFixed(3)}em)` : "none";
+      ci.style.transform = `translate3d(${((1 - m) * xo).toFixed(3)}em,0,0)`;
+    });
+    c.p.value = p;
+    $("#s6-p-out").textContent = p.toFixed(2);
+    $("#s6-spread-out").textContent = spread.toFixed(2); $("#s6-width-out").textContent = width.toFixed(2);
+    $("#s6-blur-out").textContent = blur.toFixed(2) + "em"; $("#s6-x-out").textContent = xo.toFixed(2) + "em";
+    draw();
+  }
+  function draw() {
+    const { ctx, w, h } = fitCanvas(plot);
+    const spread = +c.spread.value, width = +c.width.value, total = spread + width;
+    const n = split.chars.length, padL = 8, padR = 8, padT = 8, padB = 20;
+    const X = v => padL + v * (w - padL - padR), rowH = (h - padT - padB) / n;
+    ctx.fillStyle = tok("--ink-soft"); ctx.font = "10.5px 'JetBrains Mono', monospace";
+    ctx.fillText("progress 0", padL, h - 5); ctx.fillText("1", w - padR - 6, h - 5);
+    for (let i = 0; i < n; i++) {
+      const e = n > 1 ? i / (n - 1) : 0, a = e * spread / total, b = (e * spread + width) / total;
+      const lit = p >= b ? 1 : p <= a ? 0 : (p - a) / (b - a);
+      ctx.fillStyle = tok("--rule"); ctx.fillRect(X(a), padT + i * rowH, Math.max(1, X(b) - X(a)), Math.max(1, rowH - 1));
+      ctx.fillStyle = tok("--moss"); ctx.fillRect(X(a), padT + i * rowH, Math.max(0, (X(b) - X(a)) * lit), Math.max(1, rowH - 1));
+    }
+    ctx.fillStyle = tok("--cork"); ctx.fillRect(X(p) - 1, padT - 4, 2, h - padT - padB + 6);
+  }
+  st = ScrollTrigger.create({ trigger: tall, scroller, start: "top top", end: "bottom bottom", onUpdate: self => { p = self.progress; apply(); } });
+  c.p.addEventListener("input", () => {
+    const v = +c.p.value;
+    scroller.scrollTop = st.start + v * (st.end - st.start);
+    p = v; apply();
+  });
+  ["spread", "width", "blur", "x"].forEach(k => c[k].addEventListener("input", () => { apply(); show(); }));
+  c.ease.addEventListener("change", () => { apply(); show(); });
+  function show() {
+    setCode($("#s6-code"),
+`ScrollTrigger.create({
+  trigger: ".tall", start: "top top", end: "bottom bottom",
+  onUpdate: self => {
+    const t = self.progress * (${(+c.spread.value).toFixed(2)} + ${(+c.width.value).toFixed(2)});            // spread + window
+    split.chars.forEach((ch, i) => {
+      const e = i / (split.chars.length - 1);
+      const u = fit(t, e * ${(+c.spread.value).toFixed(2)}, e * ${(+c.spread.value).toFixed(2)} + ${(+c.width.value).toFixed(2)}, 0, 1);
+      ch.style.opacity   = u;
+      ch.style.filter    = \`blur(\${(1 - u) * ${(+c.blur.value).toFixed(2)}}em)\`;
+      ch.style.transform = \`translate3d(\${(1 - ${c.ease.checked ? "cubicOut(u)" : "u"}) * ${(+c.x.value).toFixed(2)}}em, 0, 0)\`;
+    });
+  }
+});`);
+  }
+  // rest state: partway through, so the bench reads before anyone scrolls
+  requestAnimationFrame(() => { ScrollTrigger.refresh(); scroller.scrollTop = st.start + 0.6 * (st.end - st.start); p = 0.6; apply(); });
+  apply(); show();
+  new ResizeObserver(draw).observe(plot);
+  themeHooks.push(draw);
+})();
+
+/* ================= 07 SMOOTHING ================= */
+(function smoothing() {
+  const scroller = $("#s7-scroller"), tall = $("#s7-tall"), plot = $("#s7-plot");
+  const knobs = [0, 1, 2].map(i => $("#s7-k" + i));
+  const colors = () => [tok("--ink"), tok("--moss"), tok("--cork")];
+  knobs.forEach((k, i) => { k.style.background = colors()[i]; });
+  const scrubs = [true, 0.6, 2];
+  const tweens = knobs.map((k, i) => {
+    const tw = gsap.fromTo(k, { x: 0 }, { x: () => k.parentElement.clientWidth - 18, ease: "none", paused: true });
+    ScrollTrigger.create({ trigger: tall, scroller, start: "top top", end: "bottom bottom", scrub: scrubs[i], animation: tw, invalidateOnRefresh: true });
+    return tw;
+  });
+  const hist = [[], [], []], N = 180;
+  let visible = false;
+  new IntersectionObserver(([e]) => { visible = e.isIntersecting; }).observe(plot);
+  function draw() {
+    const { ctx, w, h } = fitCanvas(plot), pad = 10, cols = colors();
+    ctx.strokeStyle = tok("--rule"); ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(pad, h - pad); ctx.lineTo(w - pad, h - pad); ctx.moveTo(pad, pad); ctx.lineTo(w - pad, pad); ctx.stroke();
+    hist.forEach((arr, i) => {
+      ctx.strokeStyle = cols[i]; ctx.lineWidth = i === 0 ? 1.5 : 2.2; ctx.beginPath();
+      arr.forEach((v, j) => { const x = pad + (j + N - arr.length) / (N - 1) * (w - 2 * pad), y = h - pad - v * (h - 2 * pad); j ? ctx.lineTo(x, y) : ctx.moveTo(x, y); });
+      ctx.stroke();
+    });
+    ctx.fillStyle = tok("--ink-soft"); ctx.font = "10.5px 'JetBrains Mono', monospace";
+    ctx.fillText("last 3 seconds →", w - pad - 104, h - pad - 4);
+  }
+  gsap.ticker.add(() => {
+    if (!visible) return;
+    tweens.forEach((tw, i) => { hist[i].push(tw.progress()); if (hist[i].length > N) hist[i].shift(); });
+    draw();
+  });
+  requestAnimationFrame(() => { ScrollTrigger.refresh(); scroller.scrollTop = (tall.offsetHeight - scroller.clientHeight) * 0.35; });
+  themeHooks.push(() => knobs.forEach((k, i) => { k.style.background = colors()[i]; }));
+})();
+
+/* ================= 08 SECTION CHOREOGRAPHY ================= */
+(function section() {
+  const img = $("#s8-img"), inner = $("#s8-in"), kick = $("#s8-kick"), title = $("#s8-title"), rule = $("#s8-rule"), para = $("#s8-para"), meta = $$(".s8-m");
+  const ov = $("#s8-ov"), counter = $("#s8-counter"), scrub = $("#s8-scrub");
+  let tl, tSplit, pSplit;
+  const gantt = makeGantt($("#s8-gantt"), () => tl);
+  function build(atEnd) {
+    if (tl) tl.kill();
+    if (tSplit) tSplit.revert(); if (pSplit) pSplit.revert();
+    gsap.set([img, inner, kick, rule, ...meta], { clearProps: "all" });
+    tSplit = SplitText.create(title, { type: "words,chars", mask: "words", ...CLS });
+    pSplit = SplitText.create(para, { type: "lines", mask: "lines", ...CLS });
+    const o = +ov.value, pos = `-=${o}`;
+    tl = gsap.timeline({ paused: true, onUpdate: sync });
+    tl.fromTo(img, { yPercent: 100 }, { yPercent: 0, duration: 1.2, ease: "expo.inOut", data: "image frame" }, 0);
+    if (counter.checked) tl.fromTo(inner, { yPercent: -100, scale: 1.3 }, { yPercent: 0, scale: 1, duration: 1.2, ease: "expo.inOut", data: "image counter" }, 0);
+    tl.from(kick, { autoAlpha: 0, x: -10, duration: 0.6, ease: "power2.out", data: "kicker" }, 0.5)
+      .from(tSplit.chars, { yPercent: 100, duration: 1, ease: "expo.out", stagger: 0.018, data: "heading chars" }, pos)
+      .from(rule, { scaleX: 0, duration: 0.8, ease: "expo.inOut", data: "rule" }, pos)
+      .from(pSplit.lines, { yPercent: 100, duration: 1, ease: "expo.out", stagger: 0.08, data: "paragraph lines" }, pos)
+      .from(meta, { autoAlpha: 0, y: 8, duration: 0.5, ease: "power2.out", stagger: 0.06, data: "meta" }, pos);
+    tl.progress(atEnd ? 1 : 0);
+    gantt.build(); sync();
+    $("#s8-ov-out").textContent = o.toFixed(2) + "s";
+    setCode($("#s8-code"),
+`const tl = gsap.timeline({ scrollTrigger: { trigger: section, start: "25% bottom", once: true } });
+tl.fromTo(".img",    { yPercent: 100 }, { yPercent: 0, duration: 1.2, ease: "expo.inOut" }, 0)${counter.checked ? `
+  .fromTo(".img-in", { yPercent: -100, scale: 1.3 }, { yPercent: 0, scale: 1, duration: 1.2, ease: "expo.inOut" }, 0)  // the counter-move` : ""}
+  .from(".kick",       { autoAlpha: 0, x: -10, duration: 0.6 }, 0.5)
+  .from(title.chars,   { yPercent: 100, duration: 1, ease: "expo.out", stagger: 0.018 }, "-=${o}")
+  .from(".rule",       { scaleX: 0, duration: 0.8, ease: "expo.inOut" }, "-=${o}")
+  .from(para.lines,    { yPercent: 100, duration: 1, ease: "expo.out", stagger: 0.08 }, "-=${o}")
+  .from(".meta span",  { autoAlpha: 0, y: 8, duration: 0.5, stagger: 0.06 }, "-=${o}");
+// total ${tl.duration().toFixed(2)}s`);
+  }
+  function sync() { scrub.value = Math.round(tl.progress() * 1000); gantt.update(); }
+  ov.addEventListener("input", () => build(true));
+  counter.addEventListener("change", () => { build(false); tl.play(); });
+  scrub.addEventListener("input", () => { tl.pause(); tl.progress(scrub.value / 1000); });
+  $("#s8-play").addEventListener("click", () => tl.restart());
+  build(true);
+  if (!reduceMotion) {
+    const once = new IntersectionObserver(([e]) => { if (e.isIntersecting) { tl.restart(); once.disconnect(); } }, { threshold: 0.5 });
+    once.observe($("#s8-proj"));
+  }
+})();
+
+/* ================= 09 PINNED BEATS ================= */
+(function pinned() {
+  const scroller = $("#s9-scroller"), sec = $("#s9-sec"), scrubSel = $("#s9-scrub"), snap = $("#s9-snap");
+  const beats = [1, 2, 3].map(i => $("#s9-b" + i));
+  let ctx, splits = [];
+  function build() {
+    if (ctx) ctx.revert();
+    splits.forEach(s => s.revert()); splits = [];
+    scroller.scrollTop = 0;
+    const sv = scrubSel.value, scrubV = sv === "true" ? true : +sv;
+    ctx = gsap.context(() => {
+      const [a, b, c] = beats.map(el => { const s = SplitText.create(el, { type: "lines", mask: "lines", ...CLS }); splits.push(s); return s.lines; });
+      const tl = gsap.timeline({ defaults: { duration: 0.6 } });
+      tl.addLabel("one")
+        .to(a, { yPercent: -100, ease: "power2.in", stagger: 0.05 }, "+=0.3")
+        .from(b, { yPercent: 100, ease: "power3.out", stagger: 0.05 }, ">-0.15")
+        .addLabel("two", "+=0.2")
+        .to(b, { yPercent: -100, ease: "power2.in", stagger: 0.05 }, "two+=0.3")
+        .from(c, { yPercent: 100, ease: "power3.out", stagger: 0.05 }, ">-0.15")
+        .addLabel("three", "+=0.2")
+        .to({}, { duration: 0.3 });
+      tl.fromTo("#s9-bar", { scaleX: 0 }, { scaleX: 1, ease: "none", duration: tl.duration() }, 0);
+      ScrollTrigger.create({
+        trigger: sec, scroller, start: "top top", end: "+=1400", pin: true, scrub: scrubV, animation: tl,
+        snap: snap.checked ? { snapTo: "labelsDirectional", duration: { min: 0.2, max: 0.7 }, delay: 0.1, ease: "power1.inOut" } : false,
+        onUpdate: self => {
+          const lab = tl.currentLabel() || "one";
+          $("#s9-label").textContent = lab; $("#s9-prog").textContent = self.progress.toFixed(3);
+          $("#s9-count").textContent = "0" + ({ one: 1, two: 2, three: 3 }[lab] || 1) + " / 03";
+        }
+      });
+    }, scroller);
+    setCode($("#s9-code"),
+`const tl = gsap.timeline({ defaults: { duration: 0.6 } })
+  .addLabel("one")
+  .to(beat1.lines,   { yPercent: -100, ease: "power2.in",  stagger: 0.05 }, "+=0.3")
+  .from(beat2.lines, { yPercent: 100,  ease: "power3.out", stagger: 0.05 }, ">-0.15")
+  .addLabel("two", "+=0.2")
+  // ...beat 3 the same way...
+  .addLabel("three", "+=0.2");
+
+ScrollTrigger.create({
+  trigger: section, start: "top top", end: "+=1400",
+  pin: true, scrub: ${sv}, animation: tl,${snap.checked ? `
+  snap: { snapTo: "labelsDirectional", duration: { min: 0.2, max: 0.7 }, ease: "power1.inOut" }` : `
+  snap: false   // try stopping mid-transition`}
+});`);
+  }
+  [scrubSel, snap].forEach(s => s.addEventListener("change", build));
+  build();
+})();
+
+/* ================= 10 ANIME.JS ================= */
+(function animeBench() {
+  if (!window.anime) { $("#s10-code").textContent = "Anime.js did not load, so this bench is unavailable."; return; }
+  const scroller = $("#s10-scroller"), heads = $$(".s10-h", scroller), syncSel = $("#s10-sync"), enterSel = $("#s10-enter");
+  let items = [];
+  function build() {
+    items.forEach(it => { it.obs.forEach(o => { try { o.revert(); } catch (e) {} }); try { it.s.revert(); } catch (e) {} });
+    items = [];
+    scroller.scrollTop = 0;
+    const sv = syncSel.value, sync = sv === "true" ? true : sv === "play pause" ? "play pause" : +sv, enter = enterSel.value;
+    heads.forEach(h => {
+      const it = { obs: [] };
+      // Lines are split asynchronously (after fonts load) and re-split on resize,
+      // so the animation is created inside addEffect, which re-runs on every split.
+      it.s = anime.splitText(h, { lines: { wrap: "clip" } }).addEffect(self => {
+        const o = anime.onScroll({ container: scroller, target: h, enter, leave: "top bottom", sync, debug: true });
+        it.obs.push(o);
+        return anime.animate(self.lines, { y: ["100%", "0%"], duration: 1200, delay: anime.stagger(90), ease: "outExpo", autoplay: o });
+      });
+      items.push(it);
+    });
+    const syncTxt = sv === "true" ? "true" : sv === "play pause" ? '"play pause"' : sv;
+    setCode($("#s10-code"),
+`import { animate, splitText, stagger, onScroll } from "animejs";
+
+splitText(heading, { lines: { wrap: "clip" } })        // masked lines
+  .addEffect(({ lines }) => animate(lines, {           // runs once lines exist, and again on re-split
+    y: ["100%", "0%"],
+    duration: 1200,                    // milliseconds, not seconds
+    delay: stagger(90),
+    ease: "outExpo",
+    autoplay: onScroll({
+      container: ".scroller",
+      enter: "${enter}",          // CONTAINER edge first, then TARGET edge
+      leave: "top bottom",
+      sync: ${syncTxt},${sv === "play pause" ? "        // play on enter, pause on leave" : sv === "true" ? "               // locked to scroll, like scrub: true" : "               // smoothed; lower = heavier"}
+      debug: true
+    })
+  }));
+// GSAP equivalent of enter "${enter}": start: "top bottom" (element top meets viewport bottom)`);
+  }
+  [syncSel, enterSel].forEach(s => s.addEventListener("change", build));
+  $("#s10-reset").addEventListener("click", build);
+  build();
+})();
+
+ScrollTrigger.refresh();
+}
+
+/* split only after fonts are ready, so lines are measured with the real typeface */
+const fontsReady = document.fonts && document.fonts.ready ? Promise.race([document.fonts.ready, new Promise(r => setTimeout(r, 2500))]) : Promise.resolve();
+fontsReady.then(boot);
+})();
+</script>
+
+</html>
